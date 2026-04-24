@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>IELTS Practice Hub</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --ink: #0f0e0d;
+      --paper: #f5f0e8;
+      --cream: #ede7d9;
+      --accent: #c8402a;
+      --gold: #d4a017;
+      --blue: #1a4a6e;
+      --green: #2a6e4a;
+      --purple: #5a2d82;
+      --teal: #1a6e6e;
+    }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--paper);
+      color: var(--ink);
+      min-height: 100vh;
+    }
+
+    /* PASSWORD GATE */
+    #gate {
+      position: fixed; inset: 0; z-index: 1000;
+      background: var(--ink);
+      display: flex; align-items: center; justify-content: center;
+      flex-direction: column; gap: 24px;
+    }
+    #gate h1 {
+      font-family: 'Playfair Display', serif;
+      color: var(--paper);
+      font-size: clamp(2rem, 5vw, 3.5rem);
+      letter-spacing: -0.02em;
+    }
+    #gate p { color: #aaa; font-size: 0.95rem; }
+    #gate-form { display: flex; gap: 12px; }
+    #gate-input {
+      padding: 12px 20px;
+      background: #1a1a1a;
+      border: 1px solid #333;
+      border-radius: 4px;
+      color: white;
+      font-size: 1rem;
+      font-family: 'DM Sans', sans-serif;
+      width: 220px;
+    }
+    #gate-input:focus { outline: none; border-color: var(--gold); }
+    #gate-btn {
+      padding: 12px 28px;
+      background: var(--accent);
+      color: white;
+      border: none;
+      border-radius: 4px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 1rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: opacity 0.2s;
+    }
+    #gate-btn:hover { opacity: 0.85; }
+    #gate-error { color: #e07070; font-size: 0.85rem; min-height: 1em; }
+
+    /* HEADER */
+    header {
+      border-bottom: 2px solid var(--ink);
+      padding: 0 48px;
+      display: flex; align-items: center; justify-content: space-between;
+      height: 72px;
+    }
+    .logo {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.5rem;
+      font-weight: 900;
+      letter-spacing: -0.02em;
+    }
+    .logo span { color: var(--accent); }
+    .student-name {
+      font-size: 0.85rem;
+      color: #666;
+    }
+    .student-name strong { color: var(--ink); }
+
+    /* HERO */
+    .hero {
+      padding: 64px 48px 48px;
+      border-bottom: 1px solid #ccc;
+    }
+    .hero-label {
+      font-size: 0.75rem;
+      font-weight: 500;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 12px;
+    }
+    .hero h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(2.5rem, 6vw, 4.5rem);
+      line-height: 1.05;
+      letter-spacing: -0.03em;
+      max-width: 700px;
+      margin-bottom: 16px;
+    }
+    .hero p {
+      color: #555;
+      font-size: 1.05rem;
+      max-width: 520px;
+      line-height: 1.65;
+    }
+
+    /* NAME INPUT */
+    .name-bar {
+      padding: 24px 48px;
+      background: var(--cream);
+      border-bottom: 1px solid #ccc;
+      display: flex; align-items: center; gap: 16px;
+      flex-wrap: wrap;
+    }
+    .name-bar label { font-size: 0.9rem; font-weight: 500; }
+    .name-bar input {
+      padding: 8px 16px;
+      border: 1.5px solid #ccc;
+      border-radius: 4px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.95rem;
+      background: white;
+      width: 200px;
+    }
+    .name-bar input:focus { outline: none; border-color: var(--ink); }
+    .name-bar .note { font-size: 0.8rem; color: #888; }
+
+    /* SECTION GRID */
+    .sections {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 0;
+      border-bottom: 2px solid var(--ink);
+    }
+    .section-card {
+      padding: 40px 36px;
+      border-right: 1px solid #ccc;
+      border-bottom: 1px solid #ccc;
+      text-decoration: none;
+      color: inherit;
+      display: block;
+      transition: background 0.2s;
+      position: relative;
+      overflow: hidden;
+    }
+    .section-card:last-child { border-right: none; }
+    .section-card:hover { background: var(--cream); }
+    .section-card:hover .card-arrow { transform: translate(4px, -4px); }
+
+    .card-num {
+      font-family: 'Playfair Display', serif;
+      font-size: 3.5rem;
+      font-weight: 900;
+      line-height: 1;
+      opacity: 0.08;
+      position: absolute;
+      top: 20px; right: 24px;
+    }
+    .card-icon {
+      font-size: 2rem;
+      margin-bottom: 16px;
+    }
+    .card-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.5rem;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+    .card-desc {
+      font-size: 0.85rem;
+      color: #666;
+      line-height: 1.6;
+      margin-bottom: 20px;
+    }
+    .card-badge {
+      display: inline-block;
+      font-size: 0.7rem;
+      font-weight: 500;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      padding: 4px 10px;
+      border-radius: 2px;
+      margin-right: 6px;
+      margin-bottom: 4px;
+    }
+    .badge-ready { background: #d4f0df; color: #1a6a3a; }
+    .badge-soon  { background: #e8e4dc; color: #888; }
+
+    .card-arrow {
+      display: inline-block;
+      font-size: 1.2rem;
+      margin-top: 16px;
+      transition: transform 0.2s;
+    }
+
+    /* COLOR ACCENTS PER CARD */
+    .card-1 .card-num { color: var(--blue); }
+    .card-1 .card-title { color: var(--blue); }
+    .card-2 .card-num { color: var(--green); }
+    .card-2 .card-title { color: var(--green); }
+    .card-3 .card-num { color: var(--accent); }
+    .card-3 .card-title { color: var(--accent); }
+    .card-4 .card-num { color: var(--purple); }
+    .card-4 .card-title { color: var(--purple); }
+    .card-5 .card-num { color: var(--teal); }
+    .card-5 .card-title { color: var(--teal); }
+
+    /* FOOTER */
+    footer {
+      padding: 32px 48px;
+      font-size: 0.8rem;
+      color: #aaa;
+      display: flex; justify-content: space-between; flex-wrap: wrap; gap: 8px;
+    }
+
+    @media (max-width: 640px) {
+      header, .hero, .name-bar, footer { padding-left: 20px; padding-right: 20px; }
+      .sections { grid-template-columns: 1fr; }
+      .section-card { border-right: none; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- PASSWORD GATE -->
+<div id="gate">
+  <h1>IELTS Practice Hub</h1>
+  <p>Enter your access password to continue.</p>
+  <div id="gate-form">
+    <input id="gate-input" type="password" placeholder="Password" autocomplete="off" />
+    <button id="gate-btn" onclick="checkPass()">Enter</button>
+  </div>
+  <div id="gate-error"></div>
+</div>
+
+<!-- MAIN CONTENT -->
+<div id="main" style="display:none">
+  <header>
+    <div class="logo">IELTS <span>Practice</span> Hub</div>
+    <div class="student-name">Welcome, <strong id="display-name">Student</strong></div>
+  </header>
+
+  <section class="hero">
+    <div class="hero-label">Your Learning Dashboard</div>
+    <h1>Practice makes<br/>perfect.</h1>
+    <p>All your IELTS preparation in one place. Grammar, vocabulary, reading, listening, writing, and speaking — organised and ready.</p>
+  </section>
+
+  <div class="name-bar">
+    <label for="student-name">Your name:</label>
+    <input type="text" id="student-name" placeholder="e.g. Linh" oninput="saveName(this.value)" />
+    <span class="note">Your name is saved automatically and appears on all submissions.</span>
+  </div>
+
+  <div class="sections">
+    <a class="section-card card-1" href="listening.html">
+      <div class="card-num">01</div>
+      <div class="card-icon">🎧</div>
+      <div class="card-title">Listening</div>
+      <div class="card-desc">Beginner (Cambridge 1–9 shortened) and Intermediate (Cambridge 10–18 full length) listening exercises.</div>
+      <span class="card-badge badge-soon">Coming soon</span>
+      <div class="card-arrow">→</div>
+    </a>
+
+    <a class="section-card card-2" href="reading.html">
+      <div class="card-num">02</div>
+      <div class="card-icon">📖</div>
+      <div class="card-title">Reading</div>
+      <div class="card-desc">Beginner (Cambridge 1–9 shortened) and Intermediate (Cambridge 10–18 full length) reading passages.</div>
+      <span class="card-badge badge-soon">Coming soon</span>
+      <div class="card-arrow">→</div>
+    </a>
+
+    <a class="section-card card-3" href="writing.html">
+      <div class="card-num">03</div>
+      <div class="card-icon">✍️</div>
+      <div class="card-title">Writing</div>
+      <div class="card-desc">Task 1 and Task 2 practice prompts from Cambridge. Submit your writing directly from here.</div>
+      <span class="card-badge badge-soon">Coming soon</span>
+      <div class="card-arrow">→</div>
+    </a>
+
+    <a class="section-card card-4" href="speaking.html">
+      <div class="card-num">04</div>
+      <div class="card-icon">🎤</div>
+      <div class="card-title">Speaking</div>
+      <div class="card-desc">Shadowing practice with videos and AI-generated IELTS speaking questions with recording & transcription.</div>
+      <span class="card-badge badge-soon">Coming soon</span>
+      <div class="card-arrow">→</div>
+    </a>
+
+    <a class="section-card card-5" href="vocab.html">
+      <div class="card-num">05</div>
+      <div class="card-icon">📚</div>
+      <div class="card-title">Vocab & Grammar</div>
+      <div class="card-desc">Exercises from Destination B2, organised by unit. Complete and submit for automatic scoring.</div>
+      <span class="card-badge badge-ready">✓ Live — 28 units</span>
+      <div class="card-arrow">→</div>
+    </a>
+  </div>
+
+  <footer>
+    <span>IELTS Practice Hub — Private use only</span>
+    <span>Built for your learning journey 🎯</span>
+  </footer>
+</div>
+
+<script>
+  const PASSWORD = "ielts2024";
+
+  function checkPass() {
+    const val = document.getElementById('gate-input').value;
+    if (val === PASSWORD) {
+      document.getElementById('gate').style.display = 'none';
+      document.getElementById('main').style.display = 'block';
+      loadName();
+    } else {
+      document.getElementById('gate-error').textContent = 'Incorrect password. Try again.';
+      document.getElementById('gate-input').value = '';
+    }
+  }
+
+  document.getElementById('gate-input').addEventListener('keydown', e => {
+    if (e.key === 'Enter') checkPass();
+  });
+
+  function saveName(val) {
+    localStorage.setItem('studentName', val);
+    document.getElementById('display-name').textContent = val || 'Student';
+  }
+
+  function loadName() {
+    const saved = localStorage.getItem('studentName') || '';
+    document.getElementById('student-name').value = saved;
+    document.getElementById('display-name').textContent = saved || 'Student';
+  }
+
+  // Auto-enter if already authenticated this session
+  if (sessionStorage.getItem('auth') === '1') {
+    document.getElementById('gate').style.display = 'none';
+    document.getElementById('main').style.display = 'block';
+    loadName();
+  }
+
+  document.getElementById('gate-btn').addEventListener('click', () => {
+    const val = document.getElementById('gate-input').value;
+    if (val === PASSWORD) sessionStorage.setItem('auth', '1');
+  });
+</script>
+</body>
+</html>

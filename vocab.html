@@ -1,0 +1,792 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Vocab & Grammar — IELTS Practice Hub</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --ink: #0f0e0d;
+      --paper: #f5f0e8;
+      --cream: #ede7d9;
+      --accent: #c8402a;
+      --teal: #1a6e6e;
+      --teal-light: #e0f0f0;
+      --success: #1a6a3a;
+      --success-bg: #d4f0df;
+      --error-bg: #fde8e4;
+      --error: #c8402a;
+    }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--paper);
+      color: var(--ink);
+      min-height: 100vh;
+    }
+
+    /* HEADER */
+    header {
+      border-bottom: 2px solid var(--ink);
+      padding: 0 48px;
+      display: flex; align-items: center; justify-content: space-between;
+      height: 64px;
+    }
+    .logo {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.3rem;
+      font-weight: 900;
+      text-decoration: none;
+      color: var(--ink);
+    }
+    .logo span { color: var(--accent); }
+    .back-link {
+      font-size: 0.85rem;
+      color: #666;
+      text-decoration: none;
+      display: flex; align-items: center; gap: 6px;
+    }
+    .back-link:hover { color: var(--ink); }
+
+    /* PAGE HEADER */
+    .page-header {
+      padding: 40px 48px 32px;
+      border-bottom: 1px solid #ccc;
+      display: flex; align-items: flex-end; justify-content: space-between; flex-wrap: wrap; gap: 16px;
+    }
+    .page-header-left .label {
+      font-size: 0.72rem;
+      font-weight: 500;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--teal);
+      margin-bottom: 8px;
+    }
+    .page-header-left h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(1.8rem, 4vw, 2.8rem);
+      font-weight: 900;
+      letter-spacing: -0.02em;
+    }
+    .page-header-left p { color: #666; font-size: 0.9rem; margin-top: 8px; }
+    .student-badge {
+      background: var(--teal-light);
+      color: var(--teal);
+      padding: 6px 14px;
+      border-radius: 20px;
+      font-size: 0.8rem;
+      font-weight: 500;
+    }
+
+    /* LAYOUT */
+    .layout {
+      display: flex;
+      min-height: calc(100vh - 200px);
+    }
+
+    /* SIDEBAR */
+    .sidebar {
+      width: 260px;
+      flex-shrink: 0;
+      border-right: 1px solid #ccc;
+      padding: 24px 0;
+      position: sticky;
+      top: 0;
+      height: calc(100vh - 64px);
+      overflow-y: auto;
+    }
+    .sidebar-section {
+      padding: 8px 20px 4px;
+      font-size: 0.68rem;
+      font-weight: 500;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: #999;
+    }
+    .unit-btn {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      width: 100%;
+      padding: 10px 20px;
+      background: none;
+      border: none;
+      text-align: left;
+      cursor: pointer;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.88rem;
+      color: #555;
+      transition: background 0.15s;
+    }
+    .unit-btn:hover { background: var(--cream); color: var(--ink); }
+    .unit-btn.active {
+      background: var(--ink);
+      color: var(--paper);
+      font-weight: 500;
+    }
+    .unit-btn.active .unit-tag { background: #ffffff22; color: #fff; }
+    .unit-tag {
+      font-size: 0.65rem;
+      padding: 2px 7px;
+      border-radius: 10px;
+      background: var(--cream);
+      color: #888;
+      font-weight: 500;
+    }
+    .unit-tag.grammar { background: #dce8f5; color: #1a4a6e; }
+    .unit-tag.vocab { background: #dcf5e8; color: #1a6a3a; }
+    .unit-tag.review { background: #f5eddc; color: #8a6000; }
+
+    /* CONTENT AREA */
+    .content {
+      flex: 1;
+      padding: 40px 48px;
+      max-width: 900px;
+    }
+
+    /* UNIT HEADER */
+    .unit-header {
+      margin-bottom: 36px;
+      padding-bottom: 24px;
+      border-bottom: 1.5px solid #ddd;
+    }
+    .unit-header .unit-label {
+      font-size: 0.72rem;
+      font-weight: 500;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--teal);
+      margin-bottom: 6px;
+    }
+    .unit-header h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: 2rem;
+      font-weight: 900;
+      letter-spacing: -0.02em;
+      margin-bottom: 6px;
+    }
+    .unit-header .topic { color: #666; font-size: 0.9rem; }
+
+    /* EXERCISE BLOCK */
+    .exercise {
+      margin-bottom: 40px;
+      animation: fadeIn 0.3s ease;
+    }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+
+    .ex-title {
+      display: flex; align-items: baseline; gap: 12px;
+      margin-bottom: 16px;
+    }
+    .ex-letter {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.8rem;
+      font-weight: 900;
+      color: var(--teal);
+      line-height: 1;
+    }
+    .ex-instruction {
+      font-size: 0.92rem;
+      color: #444;
+      font-style: italic;
+      line-height: 1.4;
+    }
+
+    /* WORD BOX */
+    .word-box {
+      background: var(--cream);
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      padding: 10px 16px;
+      margin-bottom: 14px;
+      font-size: 0.85rem;
+      color: #444;
+      line-height: 1.8;
+    }
+
+    /* QUESTIONS */
+    .question {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 14px;
+      align-items: flex-start;
+      padding: 10px 12px;
+      border-radius: 6px;
+      transition: background 0.15s;
+    }
+    .question:hover { background: #f0ece4; }
+    .q-num {
+      font-size: 0.78rem;
+      font-weight: 500;
+      color: #999;
+      min-width: 22px;
+      padding-top: 2px;
+    }
+    .q-body { flex: 1; }
+    .q-text { font-size: 0.92rem; line-height: 1.6; margin-bottom: 6px; }
+    .q-text strong { color: var(--teal); }
+
+    /* RADIO / SELECT INPUTS */
+    .radio-group { display: flex; flex-direction: column; gap: 6px; margin-top: 6px; }
+    .radio-label {
+      display: flex; align-items: center; gap: 8px;
+      font-size: 0.88rem;
+      cursor: pointer;
+      padding: 5px 8px;
+      border-radius: 4px;
+      transition: background 0.1s;
+    }
+    .radio-label:hover { background: var(--cream); }
+    .radio-label input[type="radio"] { accent-color: var(--teal); }
+
+    /* TEXT INPUTS */
+    .text-input {
+      padding: 7px 12px;
+      border: 1.5px solid #ccc;
+      border-radius: 4px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.9rem;
+      min-width: 180px;
+      max-width: 100%;
+      background: white;
+      transition: border-color 0.15s;
+    }
+    .text-input:focus { outline: none; border-color: var(--teal); }
+    .text-input.correct { border-color: var(--success); background: var(--success-bg); }
+    .text-input.incorrect { border-color: var(--error); background: var(--error-bg); }
+
+    /* PASSAGE TEXT */
+    .passage {
+      background: #fffdf8;
+      border-left: 3px solid var(--teal);
+      padding: 16px 20px;
+      border-radius: 0 6px 6px 0;
+      margin-bottom: 14px;
+      font-size: 0.92rem;
+      line-height: 1.75;
+      color: #333;
+    }
+    .passage em { font-style: italic; color: #555; }
+
+    /* MATCHING EXERCISE */
+    .match-row {
+      display: flex; align-items: center; gap: 12px;
+      margin-bottom: 10px;
+      flex-wrap: wrap;
+    }
+    .match-left { font-size: 0.9rem; min-width: 160px; }
+    .match-select {
+      padding: 6px 10px;
+      border: 1.5px solid #ccc;
+      border-radius: 4px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.88rem;
+      background: white;
+      cursor: pointer;
+    }
+    .match-select:focus { outline: none; border-color: var(--teal); }
+
+    /* SUBMIT BAR */
+    .submit-bar {
+      margin-top: 48px;
+      padding: 32px;
+      background: var(--cream);
+      border-radius: 8px;
+      border: 1.5px solid #ccc;
+    }
+    .submit-bar h3 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.2rem;
+      margin-bottom: 8px;
+    }
+    .submit-bar p { font-size: 0.85rem; color: #666; margin-bottom: 20px; }
+    .submit-btn {
+      padding: 14px 36px;
+      background: var(--teal);
+      color: white;
+      border: none;
+      border-radius: 4px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 1rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: opacity 0.2s, transform 0.1s;
+    }
+    .submit-btn:hover { opacity: 0.9; }
+    .submit-btn:active { transform: scale(0.98); }
+    .submit-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+    /* RESULT */
+    #result-box {
+      margin-top: 24px;
+      padding: 24px;
+      border-radius: 8px;
+      display: none;
+    }
+    #result-box.show { display: block; animation: fadeIn 0.4s ease; }
+    .result-score {
+      font-family: 'Playfair Display', serif;
+      font-size: 3rem;
+      font-weight: 900;
+      line-height: 1;
+      margin-bottom: 6px;
+    }
+    .result-msg { font-size: 0.95rem; color: #444; }
+    .result-detail { margin-top: 16px; font-size: 0.83rem; color: #666; line-height: 1.7; }
+    .result-excellent { background: var(--success-bg); border: 1.5px solid #a0d8b4; }
+    .result-good      { background: #fef9e0; border: 1.5px solid #d4c017; }
+    .result-ok        { background: var(--error-bg); border: 1.5px solid #f0b8a8; }
+
+    /* COMING SOON */
+    .coming-soon {
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      min-height: 300px; gap: 16px; color: #aaa; text-align: center;
+    }
+    .coming-soon .icon { font-size: 3rem; }
+    .coming-soon h3 { font-family: 'Playfair Display', serif; font-size: 1.4rem; color: #bbb; }
+    .coming-soon p { font-size: 0.85rem; max-width: 280px; }
+
+    @media (max-width: 768px) {
+      .layout { flex-direction: column; }
+      .sidebar { width: 100%; height: auto; position: static; border-right: none; border-bottom: 1px solid #ccc; display: flex; flex-wrap: wrap; padding: 12px; gap: 6px; }
+      .sidebar-section { display: none; }
+      .unit-btn { width: auto; padding: 8px 14px; border-radius: 4px; font-size: 0.8rem; }
+      .content { padding: 24px 20px; }
+      header, .page-header { padding-left: 20px; padding-right: 20px; }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <a class="logo" href="index.html">IELTS <span>Practice</span> Hub</a>
+  <a class="back-link" href="index.html">← Back to Dashboard</a>
+</header>
+
+<div class="page-header">
+  <div class="page-header-left">
+    <div class="label">Section 05</div>
+    <h1>Vocab & Grammar</h1>
+    <p>Destination B2 — 28 units of exercises. Complete and submit for your score.</p>
+  </div>
+  <div class="student-badge" id="student-badge">Student</div>
+</div>
+
+<div class="layout">
+  <!-- SIDEBAR -->
+  <nav class="sidebar">
+    <div class="sidebar-section">Grammar Units</div>
+    <button class="unit-btn active" onclick="loadUnit(1)" id="btn-1">Unit 1 — Grammar <span class="unit-tag grammar">Grammar</span></button>
+    <button class="unit-btn" onclick="loadUnit(3)" id="btn-3">Unit 3 — Grammar <span class="unit-tag grammar">Grammar</span></button>
+    <button class="unit-btn" onclick="loadUnit(5)" id="btn-5">Unit 5 — Grammar <span class="unit-tag grammar">Grammar</span></button>
+    <button class="unit-btn" onclick="loadUnit(7)" id="btn-7">Unit 7 — Grammar <span class="unit-tag grammar">Grammar</span></button>
+    <button class="unit-btn" onclick="loadUnit(9)" id="btn-9">Unit 9 — Grammar <span class="unit-tag grammar">Grammar</span></button>
+    <button class="unit-btn" onclick="loadUnit(11)" id="btn-11">Unit 11 — Grammar <span class="unit-tag grammar">Grammar</span></button>
+    <button class="unit-btn" onclick="loadUnit(13)" id="btn-13">Unit 13 — Grammar <span class="unit-tag grammar">Grammar</span></button>
+    <button class="unit-btn" onclick="loadUnit(15)" id="btn-15">Unit 15 — Grammar <span class="unit-tag grammar">Grammar</span></button>
+    <button class="unit-btn" onclick="loadUnit(17)" id="btn-17">Unit 17 — Grammar <span class="unit-tag grammar">Grammar</span></button>
+    <button class="unit-btn" onclick="loadUnit(19)" id="btn-19">Unit 19 — Grammar <span class="unit-tag grammar">Grammar</span></button>
+    <button class="unit-btn" onclick="loadUnit(21)" id="btn-21">Unit 21 — Grammar <span class="unit-tag grammar">Grammar</span></button>
+    <button class="unit-btn" onclick="loadUnit(23)" id="btn-23">Unit 23 — Grammar <span class="unit-tag grammar">Grammar</span></button>
+    <button class="unit-btn" onclick="loadUnit(25)" id="btn-25">Unit 25 — Grammar <span class="unit-tag grammar">Grammar</span></button>
+    <button class="unit-btn" onclick="loadUnit(27)" id="btn-27">Unit 27 — Grammar <span class="unit-tag grammar">Grammar</span></button>
+
+    <div class="sidebar-section">Vocabulary Units</div>
+    <button class="unit-btn" onclick="loadUnit(2)" id="btn-2">Unit 2 — Travel &amp; Transport <span class="unit-tag vocab">Vocab</span></button>
+    <button class="unit-btn" onclick="loadUnit(4)" id="btn-4">Unit 4 — Hobbies &amp; Sport <span class="unit-tag vocab">Vocab</span></button>
+    <button class="unit-btn" onclick="loadUnit(6)" id="btn-6">Unit 6 — Science &amp; Tech <span class="unit-tag vocab">Vocab</span></button>
+    <button class="unit-btn" onclick="loadUnit(8)" id="btn-8">Unit 8 — The Media <span class="unit-tag vocab">Vocab</span></button>
+    <button class="unit-btn" onclick="loadUnit(10)" id="btn-10">Unit 10 — People &amp; Society <span class="unit-tag vocab">Vocab</span></button>
+    <button class="unit-btn" onclick="loadUnit(12)" id="btn-12">Unit 12 — Law &amp; Crime <span class="unit-tag vocab">Vocab</span></button>
+    <button class="unit-btn" onclick="loadUnit(14)" id="btn-14">Unit 14 — Health &amp; Fitness <span class="unit-tag vocab">Vocab</span></button>
+    <button class="unit-btn" onclick="loadUnit(16)" id="btn-16">Unit 16 — Food &amp; Drink <span class="unit-tag vocab">Vocab</span></button>
+    <button class="unit-btn" onclick="loadUnit(18)" id="btn-18">Unit 18 — Education <span class="unit-tag vocab">Vocab</span></button>
+    <button class="unit-btn" onclick="loadUnit(20)" id="btn-20">Unit 20 — Environment <span class="unit-tag vocab">Vocab</span></button>
+    <button class="unit-btn" onclick="loadUnit(22)" id="btn-22">Unit 22 — Money &amp; Shopping <span class="unit-tag vocab">Vocab</span></button>
+    <button class="unit-btn" onclick="loadUnit(24)" id="btn-24">Unit 24 — Entertainment <span class="unit-tag vocab">Vocab</span></button>
+    <button class="unit-btn" onclick="loadUnit(26)" id="btn-26">Unit 26 — Fashion &amp; Design <span class="unit-tag vocab">Vocab</span></button>
+    <button class="unit-btn" onclick="loadUnit(28)" id="btn-28">Unit 28 — Work &amp; Business <span class="unit-tag vocab">Vocab</span></button>
+  </nav>
+
+  <!-- CONTENT -->
+  <main class="content" id="unit-content">
+    <!-- Unit 1 is loaded by default via JS -->
+  </main>
+</div>
+
+<script>
+// ── UNIT DATA ────────────────────────────────────────────────────────────────
+
+const UNITS = {
+  1: {
+    title: "Unit 1 — Grammar",
+    topic: "Present time: present simple, present continuous, present perfect simple, present perfect continuous, stative verbs",
+    type: "grammar",
+    exercises: [
+      {
+        id: "A",
+        instruction: "Circle the correct word or phrase.",
+        type: "choice2",
+        questions: [
+          { num: 1, text: "Elizabeth __ to bed at around eleven o'clock.", choices: ["usually goes", "is usually going"], answer: "usually goes" },
+          { num: 2, text: "Dan __ on the other phone right now.", choices: ["talks", "is talking"], answer: "is talking" },
+          { num: 3, text: "We __ any meat at the moment as we're both on a diet.", choices: ["don't eat", "aren't eating"], answer: "aren't eating" },
+          { num: 4, text: "__ increasingly safe?", choices: ["Does air travel get", "Is air travel getting"], answer: "Is air travel getting" },
+          { num: 5, text: "My mum __ me every weekend without fail.", choices: ["calls", "is calling"], answer: "calls" },
+          { num: 6, text: "How much __?", choices: ["do babysitters generally earn", "are babysitters generally earning"], answer: "do babysitters generally earn" },
+          { num: 7, text: "__ up with excuses for not having done your homework. It's so annoying!", choices: ["You always come", "You're always coming"], answer: "You're always coming" },
+          { num: 8, text: "__ out much during the week but __ to go out somewhere on Saturday night.", choices: ["I don't go / I always try", "I'm not going / I'm always trying"], answer: "I don't go / I always try" },
+          { num: 9, text: "No, the train __ at Cirencester on Saturdays.", choices: ["does stop", "is stopping"], answer: "does stop" },
+          { num: 10, text: "My mum __ part in ice-skating competitions almost every weekend.", choices: ["takes", "is taking"], answer: "takes" },
+        ]
+      },
+      {
+        id: "B",
+        instruction: "Rewrite correctly. Change the words or phrases in bold.",
+        type: "text",
+        questions: [
+          { num: 1, text: "My dad <strong>is often getting up</strong> late on Saturday mornings.", answer: "often gets up" },
+          { num: 2, text: "<strong>Are you speaking</strong> any other languages apart from English?", answer: "Do you speak" },
+          { num: 3, text: "I <strong>already buy</strong> all my Christmas presents and it's only October!", answer: "I've already bought" },
+          { num: 4, text: "It's the first time <strong>I'm ever having</strong> a party at home.", answer: "I've ever had" },
+          { num: 5, text: "Actually, I think Darren <strong>does works</strong> quite hard sometimes.", answer: "works/does work" },
+          { num: 6, text: "Carlo <strong>is never eating</strong> Chinese food before.", answer: "has never eaten" },
+          { num: 7, text: "Sean <strong>already books</strong> a table for tonight.", answer: "has/Sean's already booked" },
+          { num: 8, text: "<strong>Needs Melanie</strong> any help painting her new flat?", answer: "Does Melanie need" },
+        ]
+      },
+      {
+        id: "C",
+        instruction: "Complete using the correct form of the verb in brackets.",
+        type: "text",
+        questions: [
+          { num: 1, text: "It's the first time ________ (I / ever / eat) octopus!", answer: "I've ever eaten" },
+          { num: 2, text: "Sandy ________ (not / see) his sister since she went to university.", answer: "hasn't seen" },
+          { num: 3, text: "They ________ (go) on holiday to Spain and won't be back until the end of the month.", answer: "have gone" },
+          { num: 4, text: "Poor Tracy! She ________ (write) that essay for hours now and she still hasn't finished!", answer: "has been writing" },
+          { num: 5, text: "________ (you / ever / meet) anyone famous?", answer: "Have you ever met" },
+          { num: 6, text: "________ (I / try) to get in touch with Jenny all morning but I can't find her anywhere.", answer: "I've been trying" },
+          { num: 7, text: "________ (I / not finish) the book yet so I can't tell you what happens.", answer: "I haven't finished" },
+          { num: 8, text: "________ (you / already / decide) where you're going this summer?", answer: "Have you already decided" },
+          { num: 9, text: "________ (We / live) here for the last six years.", answer: "We've lived/been living" },
+          { num: 10, text: "________ (I / never / hear) such nonsense!", answer: "I've never heard" },
+        ]
+      },
+      {
+        id: "D",
+        instruction: "Complete using the words in the box.",
+        type: "wordbox",
+        wordbox: "already · before · ever · for · just · rarely · since · so · still · yet",
+        questions: [
+          { num: 1, text: "Have you ________ dreamt of winning the lottery?", answer: "ever" },
+          { num: 2, text: "I haven't worked out how to set the timer on the video ________.", answer: "yet" },
+          { num: 3, text: "My dad's lived in the same house ________ he was born.", answer: "since" },
+          { num: 4, text: "The film's only been on ________ a couple of minutes.", answer: "for" },
+          { num: 5, text: "Bruce has knocked three men out of the competition ________ far.", answer: "so" },
+          { num: 6, text: "I ________ get the chance to get any exercise – I'm just too busy.", answer: "rarely" },
+          { num: 7, text: "He's only ________ got home.", answer: "just" },
+          { num: 8, text: "It's eleven o'clock and Todd ________ hasn't come home. Where could he be?", answer: "still" },
+          { num: 9, text: "I've never met Ruth ________. What's she like?", answer: "before" },
+          { num: 10, text: "Have you finished ________? That was quick!", answer: "already" },
+        ]
+      },
+      {
+        id: "E",
+        instruction: "Choose the correct answer.",
+        type: "mcq",
+        questions: [
+          { num: 1, text: "Ian __ a shower at the moment, so could you call back in about half an hour?", choices: ["A takes", "B is taking", "C has taken", "D has been taking"], answer: "B" },
+          { num: 2, text: "__ to Ipswich before?", choices: ["A Do you ever go", "B Are you ever going", "C Have you ever been", "D Have you ever been going"], answer: "C" },
+          { num: 3, text: "I __ to all the local newspapers and TV stations to complain.", choices: ["A already write", "B already writing", "C have already written", "D have already been writing"], answer: "C" },
+          { num: 4, text: "__ TV for the last four hours? Turn it off and get some exercise!", choices: ["A Do you watch", "B Are you watching", "C Watched you", "D Have you been watching"], answer: "D" },
+          { num: 5, text: "Eric, __ hockey competitively or just for fun?", choices: ["A do you usually play", "B are you usually playing", "C have you usually played", "D have you usually been playing"], answer: "A" },
+          { num: 6, text: "That's the first time __ an answer right today!", choices: ["A I get", "B I am getting", "C I have got", "D I have been getting"], answer: "C" },
+          { num: 7, text: "Jessica has __ left, I'm afraid.", choices: ["A already", "B yet", "C still", "D so far"], answer: "A" },
+          { num: 8, text: "Dan __ in the living room while we redecorate his bedroom.", choices: ["A sleeps", "B is sleeping", "C has slept", "D does sleep"], answer: "B" },
+          { num: 9, text: "Unfortunately, Simone __ a day off very often.", choices: ["A doesn't get", "B isn't getting", "C hasn't got", "D hasn't been getting"], answer: "A" },
+          { num: 10, text: "Actually, I __ a cup of tea first thing every morning but then I switch to coffee.", choices: ["A do drink", "B am drinking", "C have drunk", "D have been drinking"], answer: "A" },
+        ]
+      },
+      {
+        id: "F",
+        instruction: "Complete using the correct form of the words in the box.",
+        type: "wordbox",
+        wordbox: "be · disagree · do · include · know · look · see · seem · understand",
+        passage: "Everyone (1) ________ that humans have been flying for only a few hundred years. But (2) ________ it possible that ancient civilizations also had the ability and technology to fly?\n\nIn the Nazcan Desert in southern Peru, there are hundreds of lines which an ancient culture drew in the dust. On the ground, they just (3) ________ like straight lines. But when you (4) ________ them from the air, you (5) ________ exactly what they are. They are incredible and enormous pictures. The pictures (6) ________ animals, birds and symbols.\n\nOne bizarre theory, which most mainstream scientists (7) ________ with, is that the people who made the lines thousands and thousands of years ago flew above the lines in balloons. It (8) ________ incredible, but a few people (9) ________ believe it's possible.",
+        questions: [
+          { num: 1, text: "Everyone ________", answer: "knows" },
+          { num: 2, text: "________ it possible", answer: "is" },
+          { num: 3, text: "they just ________", answer: "look" },
+          { num: 4, text: "when you ________ them from the air", answer: "see" },
+          { num: 5, text: "you ________ exactly what they are", answer: "understand/know/see" },
+          { num: 6, text: "The pictures ________", answer: "include" },
+          { num: 7, text: "scientists ________ with", answer: "disagree" },
+          { num: 8, text: "It ________ incredible", answer: "seems" },
+          { num: 9, text: "a few people ________", answer: "do" },
+        ]
+      },
+      {
+        id: "G",
+        instruction: "Match to make sentences.",
+        type: "match",
+        leftItems: [
+          "1. I think …",
+          "2. I'm thinking …",
+          "3. Phil's looking …",
+          "4. Phil looks …",
+          "5. Claire has …",
+          "6. Claire is having …",
+          "7. Andy is …",
+          "8. Andy is being …"
+        ],
+        rightItems: [
+          "A. darker hair than her sister.",
+          "B. I'm going to buy the new Racetrack CD.",
+          "C. a haircut at the moment.",
+          "D. for his glasses. Have you seen them?",
+          "E. not old enough to drive a car.",
+          "F. of getting Dad a CD for his birthday.",
+          "G. very annoying at the moment!",
+          "H. like he needs a holiday!"
+        ],
+        answers: ["B", "F", "D", "H", "A", "C", "E", "G"]
+      }
+    ]
+  }
+};
+
+// ── RENDERING ────────────────────────────────────────────────────────────────
+
+let currentUnit = 1;
+let answers = {};
+
+function loadUnit(num) {
+  currentUnit = num;
+  answers = {};
+
+  // Update active sidebar button
+  document.querySelectorAll('.unit-btn').forEach(b => b.classList.remove('active'));
+  const btn = document.getElementById('btn-' + num);
+  if (btn) btn.classList.add('active');
+
+  const content = document.getElementById('unit-content');
+
+  if (!UNITS[num]) {
+    content.innerHTML = `
+      <div class="coming-soon">
+        <div class="icon">🚧</div>
+        <h3>Unit ${num} — Coming Soon</h3>
+        <p>This unit's exercises are being prepared. Check back soon!</p>
+      </div>`;
+    return;
+  }
+
+  const unit = UNITS[num];
+  let html = `
+    <div class="unit-header">
+      <div class="unit-label">${unit.type === 'grammar' ? 'Grammar Unit' : 'Vocabulary Unit'} · Destination B2</div>
+      <h2>${unit.title}</h2>
+      <div class="topic">${unit.topic}</div>
+    </div>`;
+
+  unit.exercises.forEach(ex => {
+    html += renderExercise(ex);
+  });
+
+  html += `
+    <div class="submit-bar">
+      <h3>Submit your work</h3>
+      <p>When you're done, click below. Your score will be sent to your teacher's Google Sheet automatically.</p>
+      <button class="submit-btn" onclick="submitUnit()">Submit Unit ${num} →</button>
+    </div>
+    <div id="result-box"></div>`;
+
+  content.innerHTML = html;
+  content.scrollTop = 0;
+  window.scrollTo(0, 0);
+}
+
+function renderExercise(ex) {
+  let html = `<div class="exercise" id="ex-${ex.id}">
+    <div class="ex-title">
+      <div class="ex-letter">${ex.id}</div>
+      <div class="ex-instruction">${ex.instruction}</div>
+    </div>`;
+
+  if (ex.wordbox) {
+    html += `<div class="word-box"><strong>Word box:</strong> ${ex.wordbox}</div>`;
+  }
+
+  if (ex.passage) {
+    html += `<div class="passage">${ex.passage.replace(/\n/g, '<br/>')}</div>`;
+  }
+
+  if (ex.type === 'choice2') {
+    ex.questions.forEach(q => {
+      html += `<div class="question">
+        <div class="q-num">${q.num}</div>
+        <div class="q-body">
+          <div class="q-text">${q.text}</div>
+          <div class="radio-group">
+            ${q.choices.map(c => `
+              <label class="radio-label">
+                <input type="radio" name="q_${ex.id}_${q.num}" value="${c}" onchange="saveAnswer('${ex.id}', ${q.num}, this.value)" />
+                ${c}
+              </label>`).join('')}
+          </div>
+        </div>
+      </div>`;
+    });
+  }
+
+  else if (ex.type === 'text' || ex.type === 'wordbox') {
+    ex.questions.forEach(q => {
+      html += `<div class="question">
+        <div class="q-num">${q.num}</div>
+        <div class="q-body">
+          <div class="q-text">${q.text}</div>
+          <input class="text-input" type="text" id="inp_${ex.id}_${q.num}"
+            placeholder="your answer…"
+            onchange="saveAnswer('${ex.id}', ${q.num}, this.value)"
+            oninput="saveAnswer('${ex.id}', ${q.num}, this.value)" />
+        </div>
+      </div>`;
+    });
+  }
+
+  else if (ex.type === 'mcq') {
+    ex.questions.forEach(q => {
+      html += `<div class="question">
+        <div class="q-num">${q.num}</div>
+        <div class="q-body">
+          <div class="q-text">${q.text}</div>
+          <div class="radio-group">
+            ${q.choices.map(c => `
+              <label class="radio-label">
+                <input type="radio" name="q_${ex.id}_${q.num}" value="${c[0]}"
+                  onchange="saveAnswer('${ex.id}', ${q.num}, this.value)" />
+                ${c}
+              </label>`).join('')}
+          </div>
+        </div>
+      </div>`;
+    });
+  }
+
+  else if (ex.type === 'match') {
+    ex.leftItems.forEach((left, i) => {
+      const opts = ex.rightItems.map((r, ri) =>
+        `<option value="${String.fromCharCode(65+ri)}">${String.fromCharCode(65+ri)}. ${r.slice(3)}</option>`
+      ).join('');
+      html += `<div class="match-row">
+        <div class="match-left">${left}</div>
+        <select class="match-select" onchange="saveAnswer('${ex.id}', ${i+1}, this.value)">
+          <option value="">— choose —</option>
+          ${opts}
+        </select>
+      </div>`;
+    });
+  }
+
+  html += `</div>`;
+  return html;
+}
+
+function saveAnswer(exId, qNum, val) {
+  if (!answers[exId]) answers[exId] = {};
+  answers[exId][qNum] = val.trim();
+}
+
+// ── SCORING ──────────────────────────────────────────────────────────────────
+
+function scoreUnit() {
+  const unit = UNITS[currentUnit];
+  let total = 0, correct = 0;
+  let details = [];
+
+  unit.exercises.forEach(ex => {
+    if (ex.type === 'match') {
+      ex.leftItems.forEach((_, i) => {
+        total++;
+        const given = (answers[ex.id] && answers[ex.id][i+1]) || '';
+        const expected = ex.answers[i];
+        if (given.toUpperCase() === expected.toUpperCase()) correct++;
+        else details.push(`${ex.id}${i+1}: expected ${expected}, got ${given || '(blank)'}`);
+      });
+    } else {
+      ex.questions.forEach(q => {
+        total++;
+        const given = (answers[ex.id] && answers[ex.id][q.num]) || '';
+        const expected = q.answer;
+        // Accept any of the slash-separated acceptable answers
+        const accepted = expected.split('/').map(s => s.trim().toLowerCase());
+        const givenClean = given.toLowerCase().replace(/\s+/g, ' ').trim();
+        if (accepted.some(a => givenClean === a || givenClean.includes(a))) {
+          correct++;
+          // Visual feedback for text inputs
+          const inp = document.getElementById(`inp_${ex.id}_${q.num}`);
+          if (inp) inp.classList.add('correct');
+        } else {
+          const inp = document.getElementById(`inp_${ex.id}_${q.num}`);
+          if (inp) { inp.classList.add('incorrect'); }
+          details.push(`${ex.id}${q.num}: expected "${expected}", got "${given || '(blank)'}"`);
+        }
+      });
+    }
+  });
+
+  return { total, correct, details };
+}
+
+function submitUnit() {
+  const name = localStorage.getItem('studentName') || 'Unknown';
+  const { total, correct, details } = scoreUnit();
+  const pct = Math.round((correct / total) * 100);
+
+  const resultBox = document.getElementById('result-box');
+  let cls = pct >= 80 ? 'result-excellent' : pct >= 60 ? 'result-good' : 'result-ok';
+  let msg = pct >= 80 ? '🎉 Excellent work!' : pct >= 60 ? '👍 Good effort — review the mistakes.' : '📚 Keep practising — review this unit again.';
+
+  resultBox.className = 'result-box show ' + cls;
+  resultBox.innerHTML = `
+    <div class="result-score">${correct} / ${total}</div>
+    <div class="result-msg"><strong>${pct}%</strong> — ${msg}</div>
+    ${details.length ? `<div class="result-detail"><strong>Review these:</strong><br/>${details.slice(0, 10).join('<br/>')}</div>` : ''}
+  `;
+  resultBox.scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+  // Send to Google Sheets
+  sendToSheets(name, `Unit ${currentUnit}`, correct, total, pct);
+}
+
+function sendToSheets(name, unit, correct, total, pct) {
+  const SCRIPT_URL = 'YOUR_GOOGLE_APPS_SCRIPT_URL_HERE';
+  if (SCRIPT_URL === 'YOUR_GOOGLE_APPS_SCRIPT_URL_HERE') return; // not configured yet
+
+  const payload = {
+    name, unit, correct, total, pct,
+    section: 'Vocab/Grammar',
+    timestamp: new Date().toISOString()
+  };
+
+  fetch(SCRIPT_URL, {
+    method: 'POST',
+    mode: 'no-cors',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload)
+  }).catch(() => {}); // silent fail is fine
+}
+
+// ── INIT ─────────────────────────────────────────────────────────────────────
+
+window.addEventListener('DOMContentLoaded', () => {
+  const name = localStorage.getItem('studentName') || 'Student';
+  document.getElementById('student-badge').textContent = name;
+  loadUnit(1);
+});
+</script>
+</body>
+</html>

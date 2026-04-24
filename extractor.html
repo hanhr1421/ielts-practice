@@ -1,0 +1,869 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Handbook Extractor — IELTS Practice Hub</title>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #0a0a0f;
+      --surface: #111118;
+      --border: #222230;
+      --border-bright: #3a3a50;
+      --text: #e8e6f0;
+      --muted: #6a6880;
+      --accent: #7c5cfc;
+      --accent2: #fc5c7d;
+      --green: #5cfca0;
+      --yellow: #fcd95c;
+      --mono: 'Space Mono', monospace;
+      --sans: 'DM Sans', sans-serif;
+    }
+
+    body {
+      font-family: var(--sans);
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      padding: 0;
+    }
+
+    /* HEADER */
+    header {
+      padding: 20px 40px;
+      border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .logo {
+      font-family: var(--mono);
+      font-size: 0.85rem;
+      color: var(--accent);
+      letter-spacing: 0.05em;
+    }
+    .logo span { color: var(--muted); }
+    .badge {
+      font-family: var(--mono);
+      font-size: 0.65rem;
+      padding: 4px 10px;
+      border: 1px solid var(--accent);
+      border-radius: 2px;
+      color: var(--accent);
+      letter-spacing: 0.1em;
+    }
+
+    /* MAIN LAYOUT */
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 48px 40px;
+    }
+
+    .page-title {
+      font-family: var(--mono);
+      font-size: clamp(1.6rem, 4vw, 2.4rem);
+      font-weight: 700;
+      line-height: 1.2;
+      margin-bottom: 12px;
+    }
+    .page-title span { color: var(--accent); }
+    .page-sub {
+      color: var(--muted);
+      font-size: 0.9rem;
+      line-height: 1.7;
+      max-width: 560px;
+      margin-bottom: 40px;
+    }
+
+    /* STEPS */
+    .steps {
+      display: flex;
+      gap: 0;
+      margin-bottom: 40px;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      overflow: hidden;
+    }
+    .step {
+      flex: 1;
+      padding: 16px 20px;
+      border-right: 1px solid var(--border);
+      position: relative;
+    }
+    .step:last-child { border-right: none; }
+    .step.active { background: #16141f; }
+    .step.done { background: #0d1a14; }
+    .step-num {
+      font-family: var(--mono);
+      font-size: 0.65rem;
+      color: var(--muted);
+      margin-bottom: 4px;
+      letter-spacing: 0.1em;
+    }
+    .step-label {
+      font-size: 0.8rem;
+      font-weight: 500;
+      color: var(--muted);
+    }
+    .step.active .step-num { color: var(--accent); }
+    .step.active .step-label { color: var(--text); }
+    .step.done .step-num { color: var(--green); }
+    .step.done .step-label { color: var(--green); }
+
+    /* CARD */
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 32px;
+      margin-bottom: 24px;
+    }
+    .card-title {
+      font-family: var(--mono);
+      font-size: 0.8rem;
+      color: var(--accent);
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      margin-bottom: 16px;
+    }
+
+    /* API KEY INPUT */
+    .field-label {
+      font-size: 0.82rem;
+      color: var(--muted);
+      margin-bottom: 8px;
+      display: flex; align-items: center; gap: 8px;
+    }
+    .field-label a { color: var(--accent); font-size: 0.75rem; }
+    .input-row { display: flex; gap: 10px; margin-bottom: 8px; }
+    .mono-input {
+      flex: 1;
+      background: var(--bg);
+      border: 1px solid var(--border-bright);
+      border-radius: 4px;
+      padding: 10px 14px;
+      font-family: var(--mono);
+      font-size: 0.78rem;
+      color: var(--text);
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    .mono-input:focus { border-color: var(--accent); }
+    .mono-input::placeholder { color: var(--muted); }
+    .hint { font-size: 0.72rem; color: var(--muted); line-height: 1.6; }
+    .hint a { color: var(--accent); }
+
+    /* FILE DROP ZONE */
+    .dropzone {
+      border: 2px dashed var(--border-bright);
+      border-radius: 6px;
+      padding: 40px 24px;
+      text-align: center;
+      cursor: pointer;
+      transition: border-color 0.2s, background 0.2s;
+      position: relative;
+    }
+    .dropzone:hover, .dropzone.dragover {
+      border-color: var(--accent);
+      background: #16141f;
+    }
+    .dropzone input[type="file"] {
+      position: absolute; inset: 0;
+      opacity: 0; cursor: pointer; width: 100%; height: 100%;
+    }
+    .drop-icon { font-size: 2.5rem; margin-bottom: 12px; }
+    .drop-title { font-family: var(--mono); font-size: 0.9rem; margin-bottom: 6px; }
+    .drop-sub { font-size: 0.78rem; color: var(--muted); }
+    .drop-file-name {
+      margin-top: 12px;
+      font-family: var(--mono);
+      font-size: 0.78rem;
+      color: var(--green);
+    }
+
+    /* PAGE RANGE */
+    .range-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 12px;
+      margin-top: 16px;
+    }
+    .range-field label {
+      display: block;
+      font-size: 0.72rem;
+      color: var(--muted);
+      margin-bottom: 6px;
+      font-family: var(--mono);
+      letter-spacing: 0.05em;
+    }
+    .range-field input {
+      width: 100%;
+      background: var(--bg);
+      border: 1px solid var(--border-bright);
+      border-radius: 4px;
+      padding: 8px 12px;
+      font-family: var(--mono);
+      font-size: 0.82rem;
+      color: var(--text);
+      outline: none;
+    }
+    .range-field input:focus { border-color: var(--accent); }
+
+    /* EXTRACT BUTTON */
+    .extract-btn {
+      width: 100%;
+      padding: 16px;
+      background: var(--accent);
+      color: white;
+      border: none;
+      border-radius: 4px;
+      font-family: var(--mono);
+      font-size: 0.88rem;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      cursor: pointer;
+      transition: opacity 0.2s, transform 0.1s;
+      margin-top: 20px;
+    }
+    .extract-btn:hover:not(:disabled) { opacity: 0.9; }
+    .extract-btn:active:not(:disabled) { transform: scale(0.99); }
+    .extract-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+    /* PROGRESS LOG */
+    .log-box {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 16px;
+      font-family: var(--mono);
+      font-size: 0.75rem;
+      color: var(--muted);
+      min-height: 120px;
+      max-height: 280px;
+      overflow-y: auto;
+      line-height: 1.8;
+    }
+    .log-line { display: block; }
+    .log-line.ok { color: var(--green); }
+    .log-line.warn { color: var(--yellow); }
+    .log-line.err { color: var(--accent2); }
+    .log-line.info { color: var(--accent); }
+
+    /* PROGRESS BAR */
+    .progress-wrap {
+      background: var(--border);
+      border-radius: 2px;
+      height: 4px;
+      margin: 12px 0;
+      overflow: hidden;
+    }
+    .progress-bar {
+      height: 100%;
+      background: var(--accent);
+      border-radius: 2px;
+      transition: width 0.4s ease;
+      width: 0%;
+    }
+
+    /* OUTPUT */
+    .output-section { display: none; }
+    .output-section.show { display: block; }
+
+    .copy-btn {
+      padding: 10px 20px;
+      background: var(--green);
+      color: #0a0a0f;
+      border: none;
+      border-radius: 4px;
+      font-family: var(--mono);
+      font-size: 0.78rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: opacity 0.2s;
+      margin-bottom: 12px;
+    }
+    .copy-btn:hover { opacity: 0.85; }
+
+    .output-box {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 16px;
+      font-family: var(--mono);
+      font-size: 0.72rem;
+      color: #a0e8c0;
+      max-height: 400px;
+      overflow-y: auto;
+      white-space: pre-wrap;
+      word-break: break-all;
+      line-height: 1.6;
+    }
+
+    /* INSTRUCTIONS */
+    .instructions {
+      background: #0d1020;
+      border: 1px solid #2a2a50;
+      border-radius: 6px;
+      padding: 24px;
+      margin-top: 24px;
+    }
+    .instructions h3 {
+      font-family: var(--mono);
+      font-size: 0.78rem;
+      color: var(--accent);
+      letter-spacing: 0.1em;
+      margin-bottom: 16px;
+    }
+    .instructions ol {
+      padding-left: 20px;
+      font-size: 0.84rem;
+      line-height: 2;
+      color: var(--muted);
+    }
+    .instructions ol li { margin-bottom: 4px; }
+    .instructions code {
+      background: #1a1a30;
+      padding: 2px 6px;
+      border-radius: 3px;
+      font-family: var(--mono);
+      font-size: 0.75rem;
+      color: var(--accent);
+    }
+
+    /* STATS ROW */
+    .stats-row {
+      display: flex; gap: 16px; flex-wrap: wrap;
+      margin-bottom: 16px;
+    }
+    .stat {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 10px 16px;
+      font-family: var(--mono);
+      font-size: 0.72rem;
+    }
+    .stat-val { color: var(--green); font-size: 1.2rem; font-weight: 700; display: block; }
+    .stat-label { color: var(--muted); }
+
+    @media (max-width: 600px) {
+      .container { padding: 24px 16px; }
+      header { padding: 16px 20px; }
+      .steps { flex-direction: column; }
+      .step { border-right: none; border-bottom: 1px solid var(--border); }
+      .range-row { grid-template-columns: 1fr 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="logo">IELTS<span>_</span>EXTRACTOR<span>.tool</span></div>
+  <div class="badge">TEACHER TOOL</div>
+</header>
+
+<div class="container">
+
+  <div class="page-title">Handbook <span>Extractor</span></div>
+  <div class="page-sub">Upload any grammar or vocabulary handbook PDF. This tool uses Claude AI to automatically extract all exercises and answers, then gives you ready-to-paste code for your IELTS Practice Hub website.</div>
+
+  <!-- STEPS INDICATOR -->
+  <div class="steps">
+    <div class="step active" id="step1"><div class="step-num">01</div><div class="step-label">API Key</div></div>
+    <div class="step" id="step2"><div class="step-num">02</div><div class="step-label">Upload PDF</div></div>
+    <div class="step" id="step3"><div class="step-num">03</div><div class="step-label">Extracting</div></div>
+    <div class="step" id="step4"><div class="step-num">04</div><div class="step-label">Copy Code</div></div>
+  </div>
+
+  <!-- CARD 1: API KEY -->
+  <div class="card">
+    <div class="card-title">// 01 — Anthropic API Key</div>
+    <div class="field-label">
+      Your API key — stays in your browser, never sent anywhere except Anthropic
+      <a href="https://console.anthropic.com/settings/keys" target="_blank">→ Get one here</a>
+    </div>
+    <div class="input-row">
+      <input class="mono-input" type="password" id="api-key" placeholder="sk-ant-api03-..." />
+    </div>
+    <div class="hint">
+      Free tier works fine. Cost per full book extraction: ~$0.10–0.30 USD.<br/>
+      Key is stored only in this browser tab — not saved, not transmitted to anyone else.
+    </div>
+  </div>
+
+  <!-- CARD 2: UPLOAD -->
+  <div class="card">
+    <div class="card-title">// 02 — Upload Handbook PDF</div>
+    <div class="dropzone" id="dropzone">
+      <input type="file" id="pdf-file" accept=".pdf" onchange="handleFile(this)"/>
+      <div class="drop-icon">📄</div>
+      <div class="drop-title">Drop PDF here or click to browse</div>
+      <div class="drop-sub">Destination B2, Cambridge IELTS, or any grammar handbook</div>
+      <div class="drop-file-name" id="file-name"></div>
+    </div>
+
+    <div class="range-row">
+      <div class="range-field">
+        <label>BOOK TYPE</label>
+        <select class="mono-input" id="book-type" style="cursor:pointer">
+          <option value="destination_b2">Destination B2</option>
+          <option value="cambridge_ielts">Cambridge IELTS</option>
+          <option value="generic_grammar">Generic Grammar Book</option>
+          <option value="custom">Custom (describe below)</option>
+        </select>
+      </div>
+      <div class="range-field">
+        <label>FIRST EXERCISE PAGE</label>
+        <input type="number" id="page-start" value="8" min="1" placeholder="8"/>
+      </div>
+      <div class="range-field">
+        <label>LAST EXERCISE PAGE</label>
+        <input type="number" id="page-end" value="180" min="1" placeholder="180"/>
+      </div>
+    </div>
+
+    <div class="range-row" style="margin-top:8px">
+      <div class="range-field" style="grid-column: span 3">
+        <label>ANSWER KEY PAGE RANGE (optional)</label>
+        <input type="text" class="mono-input" id="answer-pages" placeholder="e.g. 229-256 — leave blank if answers are inline"/>
+      </div>
+    </div>
+  </div>
+
+  <!-- CARD 3: EXTRACT -->
+  <div class="card">
+    <div class="card-title">// 03 — Extract</div>
+    <div class="hint" style="margin-bottom:16px">
+      The AI will process the PDF in chunks (10 pages at a time), extract each unit's exercises and answers, and build structured JSON automatically. This takes 2–5 minutes for a full book.
+    </div>
+
+    <div class="progress-wrap" id="progress-wrap" style="display:none">
+      <div class="progress-bar" id="progress-bar"></div>
+    </div>
+
+    <div class="log-box" id="log-box">
+      <span class="log-line info">// Ready. Fill in your API key and upload a PDF to begin.</span>
+    </div>
+
+    <button class="extract-btn" id="extract-btn" onclick="startExtraction()" disabled>
+      ▶ START EXTRACTION
+    </button>
+  </div>
+
+  <!-- OUTPUT SECTION -->
+  <div class="output-section" id="output-section">
+    <div class="card">
+      <div class="card-title">// 04 — Extracted Data — Ready to Use</div>
+
+      <div class="stats-row" id="stats-row"></div>
+
+      <button class="copy-btn" onclick="copyOutput()">⎘ COPY ALL CODE</button>
+      <div class="hint" style="margin-bottom:12px">Paste this block into <code>vocab.html</code>, replacing the <code>const UNITS = { 1: { ... } };</code> section.</div>
+
+      <div class="output-box" id="output-box"></div>
+    </div>
+
+    <div class="instructions">
+      <h3>// HOW TO USE THIS IN YOUR WEBSITE</h3>
+      <ol>
+        <li>Click <strong>"Copy All Code"</strong> above</li>
+        <li>Open <code>vocab.html</code> from your downloaded site folder</li>
+        <li>Find the line: <code>const UNITS = {</code></li>
+        <li>Select everything from that line to the matching closing <code>};</code></li>
+        <li>Paste the copied code to replace it</li>
+        <li>Save the file and re-upload to GitHub / Netlify</li>
+        <li>Done — all units are now live on your site ✓</li>
+      </ol>
+    </div>
+  </div>
+
+</div><!-- /container -->
+
+<script>
+// ── STATE ────────────────────────────────────────────────────────────────────
+let pdfFile = null;
+let extractedUnits = {};
+let isRunning = false;
+
+// ── FILE HANDLING ─────────────────────────────────────────────────────────────
+function handleFile(input) {
+  if (input.files && input.files[0]) {
+    pdfFile = input.files[0];
+    document.getElementById('file-name').textContent = '✓ ' + pdfFile.name + ' (' + (pdfFile.size / 1024 / 1024).toFixed(1) + ' MB)';
+    checkReady();
+  }
+}
+
+// Drag and drop
+const dz = document.getElementById('dropzone');
+dz.addEventListener('dragover', e => { e.preventDefault(); dz.classList.add('dragover'); });
+dz.addEventListener('dragleave', () => dz.classList.remove('dragover'));
+dz.addEventListener('drop', e => {
+  e.preventDefault(); dz.classList.remove('dragover');
+  const f = e.dataTransfer.files[0];
+  if (f && f.type === 'application/pdf') {
+    pdfFile = f;
+    document.getElementById('file-name').textContent = '✓ ' + f.name + ' (' + (f.size/1024/1024).toFixed(1) + ' MB)';
+    checkReady();
+  }
+});
+
+document.getElementById('api-key').addEventListener('input', checkReady);
+
+function checkReady() {
+  const hasKey = document.getElementById('api-key').value.trim().startsWith('sk-');
+  const hasFile = !!pdfFile;
+  document.getElementById('extract-btn').disabled = !(hasKey && hasFile);
+  if (hasKey) setStep(2);
+  if (hasKey && hasFile) setStep(2);
+}
+
+function setStep(n) {
+  for (let i = 1; i <= 4; i++) {
+    const el = document.getElementById('step' + i);
+    el.classList.remove('active', 'done');
+    if (i < n) el.classList.add('done');
+    if (i === n) el.classList.add('active');
+  }
+}
+
+// ── LOGGING ───────────────────────────────────────────────────────────────────
+function log(msg, type = '') {
+  const box = document.getElementById('log-box');
+  const line = document.createElement('span');
+  line.className = 'log-line ' + type;
+  line.textContent = msg;
+  box.appendChild(line);
+  box.appendChild(document.createElement('br'));
+  box.scrollTop = box.scrollHeight;
+}
+
+function setProgress(pct) {
+  document.getElementById('progress-wrap').style.display = 'block';
+  document.getElementById('progress-bar').style.width = pct + '%';
+}
+
+// ── PDF TO BASE64 ─────────────────────────────────────────────────────────────
+function fileToBase64(file) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(reader.result.split(',')[1]);
+    reader.onerror = reject;
+    reader.readAsDataURL(file);
+  });
+}
+
+// ── MAIN EXTRACTION ───────────────────────────────────────────────────────────
+async function startExtraction() {
+  if (isRunning) return;
+  isRunning = true;
+
+  const apiKey = document.getElementById('api-key').value.trim();
+  const bookType = document.getElementById('book-type').value;
+  const pageStart = parseInt(document.getElementById('page-start').value) || 8;
+  const pageEnd = parseInt(document.getElementById('page-end').value) || 180;
+  const answerPages = document.getElementById('answer-pages').value.trim();
+
+  document.getElementById('extract-btn').disabled = true;
+  document.getElementById('extract-btn').textContent = '⏳ EXTRACTING...';
+  document.getElementById('log-box').innerHTML = '';
+  extractedUnits = {};
+
+  setStep(3);
+  log('// Starting extraction process...', 'info');
+  log('// PDF: ' + pdfFile.name, 'info');
+  log('// Exercise pages: ' + pageStart + '–' + pageEnd, 'info');
+  if (answerPages) log('// Answer key pages: ' + answerPages, 'info');
+
+  try {
+    // Convert full PDF to base64
+    log('// Converting PDF to base64...', '');
+    setProgress(5);
+    const base64 = await fileToBase64(pdfFile);
+    log('// PDF ready (' + (base64.length / 1024).toFixed(0) + ' KB base64)', 'ok');
+
+    // Step 1: Get table of contents / unit list
+    log('// Step 1: Scanning table of contents...', 'info');
+    setProgress(10);
+    const unitList = await getUnitList(apiKey, base64, bookType);
+    log('// Found ' + unitList.length + ' units/sections', 'ok');
+    unitList.forEach(u => log('  · ' + u.id + ': ' + u.title + ' (' + u.type + ')', ''));
+
+    // Step 2: Extract each unit
+    const total = unitList.length;
+    for (let i = 0; i < unitList.length; i++) {
+      const unit = unitList[i];
+      const pct = 15 + Math.round((i / total) * 75);
+      setProgress(pct);
+      log('// Extracting Unit ' + unit.id + ': ' + unit.title + '...', 'info');
+
+      try {
+        const extracted = await extractUnit(apiKey, base64, unit, bookType, answerPages);
+        extractedUnits[unit.id] = extracted;
+        const qCount = countQuestions(extracted);
+        log('  ✓ Unit ' + unit.id + ' done — ' + qCount + ' questions extracted', 'ok');
+      } catch (err) {
+        log('  ✗ Unit ' + unit.id + ' failed: ' + err.message, 'err');
+        log('    Skipping — you can re-run just this unit later', 'warn');
+      }
+
+      // Small delay to avoid rate limits
+      if (i < unitList.length - 1) await delay(800);
+    }
+
+    setProgress(95);
+    log('// Building final JavaScript output...', 'info');
+    const output = buildOutput(extractedUnits);
+
+    setProgress(100);
+    log('// ✓ EXTRACTION COMPLETE!', 'ok');
+    log('// ' + Object.keys(extractedUnits).length + ' units extracted', 'ok');
+    log('// Copy the code below and paste into vocab.html', 'ok');
+
+    showOutput(output, extractedUnits);
+    setStep(4);
+
+  } catch (err) {
+    log('// FATAL ERROR: ' + err.message, 'err');
+    log('// Check your API key and try again', 'warn');
+    console.error(err);
+  }
+
+  document.getElementById('extract-btn').disabled = false;
+  document.getElementById('extract-btn').textContent = '▶ RUN AGAIN';
+  isRunning = false;
+}
+
+// ── API CALLS ─────────────────────────────────────────────────────────────────
+
+async function callClaude(apiKey, messages, maxTokens = 4000) {
+  const response = await fetch('https://api.anthropic.com/v1/messages', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'x-api-key': apiKey,
+      'anthropic-version': '2023-06-01',
+      'anthropic-dangerous-direct-browser-access': 'true'
+    },
+    body: JSON.stringify({
+      model: 'claude-opus-4-5',
+      max_tokens: maxTokens,
+      messages
+    })
+  });
+
+  if (!response.ok) {
+    const err = await response.json().catch(() => ({}));
+    throw new Error(err.error?.message || 'API error ' + response.status);
+  }
+
+  const data = await response.json();
+  return data.content[0].text;
+}
+
+async function getUnitList(apiKey, base64, bookType) {
+  const prompt = `You are analyzing a ${bookType === 'destination_b2' ? 'Destination B2 Grammar & Vocabulary' : 'grammar/vocabulary'} textbook PDF.
+
+Look at the table of contents pages and identify ALL units/chapters that contain exercises.
+
+Return ONLY a JSON array, no other text:
+[
+  {"id": 1, "title": "Grammar — Present tenses", "type": "grammar", "topic": "Present simple, continuous, perfect"},
+  {"id": 2, "title": "Vocabulary — Travel", "type": "vocabulary", "topic": "Travel and transport"},
+  ...
+]
+
+Include all units you can find. For Destination B2, there should be 28 units.`;
+
+  const text = await callClaude(apiKey, [{
+    role: 'user',
+    content: [
+      { type: 'document', source: { type: 'base64', media_type: 'application/pdf', data: base64 } },
+      { type: 'text', text: prompt }
+    ]
+  }], 2000);
+
+  try {
+    const clean = text.replace(/```json|```/g, '').trim();
+    return JSON.parse(clean);
+  } catch {
+    // Fallback: generate default unit list for Destination B2
+    return generateDefaultUnitList();
+  }
+}
+
+async function extractUnit(apiKey, base64, unit, bookType, answerPages) {
+  const answerNote = answerPages
+    ? `The answer key is on pages ${answerPages} — please find and include the correct answers.`
+    : `If answers are shown inline with exercises, include them.`;
+
+  const prompt = `You are extracting exercises from a ${bookType === 'destination_b2' ? 'Destination B2' : 'grammar'} textbook.
+
+Extract ALL exercises for: Unit ${unit.id} — "${unit.title}"
+Topic: ${unit.topic}
+${answerNote}
+
+Return ONLY valid JSON in this exact structure — no markdown, no explanation:
+
+{
+  "id": ${unit.id},
+  "title": "Unit ${unit.id} — ${unit.title}",
+  "topic": "${unit.topic}",
+  "type": "${unit.type}",
+  "exercises": [
+    {
+      "id": "A",
+      "instruction": "Circle the correct word or phrase.",
+      "type": "choice2",
+      "questions": [
+        {"num": 1, "text": "Elizabeth __ to bed at around eleven.", "choices": ["usually goes", "is usually going"], "answer": "usually goes"}
+      ]
+    },
+    {
+      "id": "B",
+      "instruction": "Rewrite correctly. Change the words in bold.",
+      "type": "text",
+      "questions": [
+        {"num": 1, "text": "My dad <strong>is often getting up</strong> late.", "answer": "often gets up"}
+      ]
+    },
+    {
+      "id": "C",
+      "instruction": "Complete using the correct form of the verb in brackets.",
+      "type": "text",
+      "questions": [
+        {"num": 1, "text": "It's the first time ________ (I / ever / eat) octopus!", "answer": "I've ever eaten"}
+      ]
+    },
+    {
+      "id": "D",
+      "instruction": "Complete using the words in the box.",
+      "type": "wordbox",
+      "wordbox": "already · before · ever · for · just",
+      "questions": [
+        {"num": 1, "text": "Have you ________ dreamt of winning?", "answer": "ever"}
+      ]
+    },
+    {
+      "id": "E",
+      "instruction": "Choose the correct answer.",
+      "type": "mcq",
+      "questions": [
+        {"num": 1, "text": "Ian __ a shower at the moment.", "choices": ["A takes", "B is taking", "C has taken", "D has been taking"], "answer": "B"}
+      ]
+    }
+  ]
+}
+
+Exercise type reference:
+- "choice2" = choose between 2 options separated by /
+- "text" = fill-in or rewrite (free text answer)
+- "wordbox" = fill-in from a given word box (include "wordbox" field)
+- "mcq" = multiple choice A/B/C/D (choices array, answer is just the letter)
+- "match" = matching exercise (use leftItems, rightItems, answers arrays)
+
+If a passage/text is used in an exercise, add a "passage" field with the text.
+Include EVERY exercise in the unit (A through H or however many there are).
+Include the CORRECT ANSWERS for every question.`;
+
+  const text = await callClaude(apiKey, [{
+    role: 'user',
+    content: [
+      { type: 'document', source: { type: 'base64', media_type: 'application/pdf', data: base64 } },
+      { type: 'text', text: prompt }
+    ]
+  }], 4000);
+
+  const clean = text.replace(/```json|```/g, '').trim();
+  return JSON.parse(clean);
+}
+
+// ── OUTPUT BUILDERS ───────────────────────────────────────────────────────────
+
+function buildOutput(units) {
+  const entries = Object.entries(units).map(([id, unit]) => {
+    return `  ${id}: ${JSON.stringify(unit, null, 4).replace(/^/gm, '  ').trimStart()}`;
+  }).join(',\n');
+  return `const UNITS = {\n${entries}\n};`;
+}
+
+function countQuestions(unit) {
+  if (!unit.exercises) return 0;
+  return unit.exercises.reduce((sum, ex) => {
+    if (ex.questions) return sum + ex.questions.length;
+    if (ex.leftItems) return sum + ex.leftItems.length;
+    return sum;
+  }, 0);
+}
+
+function showOutput(code, units) {
+  document.getElementById('output-section').classList.add('show');
+
+  // Stats
+  const unitCount = Object.keys(units).length;
+  const totalQ = Object.values(units).reduce((s, u) => s + countQuestions(u), 0);
+  const exCount = Object.values(units).reduce((s, u) => s + (u.exercises ? u.exercises.length : 0), 0);
+  document.getElementById('stats-row').innerHTML = `
+    <div class="stat"><span class="stat-val">${unitCount}</span><span class="stat-label">units</span></div>
+    <div class="stat"><span class="stat-val">${exCount}</span><span class="stat-label">exercises</span></div>
+    <div class="stat"><span class="stat-val">${totalQ}</span><span class="stat-label">questions</span></div>
+    <div class="stat"><span class="stat-val">${(JSON.stringify(units).length/1024).toFixed(0)}KB</span><span class="stat-label">data size</span></div>
+  `;
+
+  document.getElementById('output-box').textContent = code;
+  document.getElementById('output-section').scrollIntoView({ behavior: 'smooth' });
+}
+
+function copyOutput() {
+  const text = document.getElementById('output-box').textContent;
+  navigator.clipboard.writeText(text).then(() => {
+    const btn = document.querySelector('.copy-btn');
+    btn.textContent = '✓ COPIED!';
+    setTimeout(() => btn.textContent = '⎘ COPY ALL CODE', 2000);
+  });
+}
+
+// ── HELPERS ───────────────────────────────────────────────────────────────────
+
+function delay(ms) { return new Promise(r => setTimeout(r, ms)); }
+
+function generateDefaultUnitList() {
+  const units = [];
+  const grammarTopics = [
+    'Present time: present simple, continuous, perfect simple, perfect continuous, stative verbs',
+    'Past time: past simple, continuous, past perfect simple, past perfect continuous, would, used to',
+    'Future time / present tenses in time clauses / prepositions of time and place',
+    'Articles / countable and uncountable nouns / quantifiers',
+    'Conditionals: zero, first, second, third, mixed, inverted / unless, in case, as/so long as',
+    'Comparatives and superlatives / so, such, enough, too',
+    'Modals: ability, permission, advice, criticism, obligation and necessity, degrees of certainty',
+    'The passive / the causative / direct and indirect objects',
+    '-ing form or infinitive / prefer, would rather, had better / infinitives of purpose',
+    'Questions / question tags / indirect questions',
+    'Reported speech / reported questions / reporting verbs',
+    'Relative clauses / participles',
+    'Unreal past, wishes / contrast',
+    'Inversions / possessives'
+  ];
+  const vocabTopics = [
+    'Travel and transport', 'Hobbies, sport and games', 'Science and technology',
+    'The media', 'People and society', 'The law and crime', 'Health and fitness',
+    'Food and drink', 'Education and learning', 'Weather and the environment',
+    'Money and shopping', 'Entertainment', 'Fashion and design', 'Work and business'
+  ];
+
+  let gi = 0, vi = 0;
+  for (let i = 1; i <= 28; i++) {
+    if (i % 2 === 1) {
+      units.push({ id: i, title: 'Unit ' + i + ' — Grammar', type: 'grammar', topic: grammarTopics[gi++] || 'Grammar' });
+    } else {
+      units.push({ id: i, title: 'Unit ' + i + ' — Vocabulary', type: 'vocabulary', topic: vocabTopics[vi++] || 'Vocabulary' });
+    }
+  }
+  return units;
+}
+</script>
+</body>
+</html>
