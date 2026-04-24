@@ -322,23 +322,105 @@
     /* RESULT */
     #result-box {
       margin-top: 24px;
-      padding: 24px;
       border-radius: 8px;
       display: none;
     }
     #result-box.show { display: block; animation: fadeIn 0.4s ease; }
+
+    .result-header {
+      padding: 24px 28px;
+      border-radius: 8px 8px 0 0;
+      display: flex; align-items: center; gap: 24px; flex-wrap: wrap;
+    }
+    .result-excellent { background: var(--success-bg); border: 1.5px solid #a0d8b4; }
+    .result-good      { background: #fef9e0; border: 1.5px solid #d4b800; }
+    .result-ok        { background: var(--error-bg); border: 1.5px solid #f0b8a8; }
+
     .result-score {
       font-family: 'Playfair Display', serif;
-      font-size: 3rem;
+      font-size: 3.2rem;
       font-weight: 900;
       line-height: 1;
-      margin-bottom: 6px;
     }
-    .result-msg { font-size: 0.95rem; color: #444; }
-    .result-detail { margin-top: 16px; font-size: 0.83rem; color: #666; line-height: 1.7; }
-    .result-excellent { background: var(--success-bg); border: 1.5px solid #a0d8b4; }
-    .result-good      { background: #fef9e0; border: 1.5px solid #d4c017; }
-    .result-ok        { background: var(--error-bg); border: 1.5px solid #f0b8a8; }
+    .result-right-col { flex: 1; }
+    .result-msg { font-size: 1rem; font-weight: 500; margin-bottom: 4px; }
+    .result-sub { font-size: 0.82rem; color: #666; }
+
+    /* BREAKDOWN TABLE */
+    .result-breakdown {
+      border: 1.5px solid #ddd;
+      border-top: none;
+      border-radius: 0 0 8px 8px;
+      overflow: hidden;
+    }
+    .breakdown-title {
+      padding: 14px 20px;
+      background: var(--ink);
+      color: var(--paper);
+      font-family: 'Playfair Display', serif;
+      font-size: 0.95rem;
+      font-weight: 700;
+      display: flex; align-items: center; gap: 10px;
+    }
+    .breakdown-title .bd-counts {
+      margin-left: auto;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.78rem;
+      font-weight: 400;
+      opacity: 0.7;
+    }
+    .breakdown-row {
+      display: grid;
+      grid-template-columns: 48px 1fr 1fr 1fr;
+      gap: 0;
+      border-bottom: 1px solid #eee;
+      font-size: 0.82rem;
+      align-items: center;
+    }
+    .breakdown-row:last-child { border-bottom: none; }
+    .breakdown-row.header-row {
+      background: #f8f4ec;
+      font-size: 0.72rem;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: #888;
+    }
+    .breakdown-row.correct-row { background: #f6fef8; }
+    .breakdown-row.wrong-row   { background: #fff8f7; }
+
+    .bd-cell {
+      padding: 9px 14px;
+      line-height: 1.4;
+    }
+    .bd-num {
+      font-weight: 600;
+      color: #999;
+      font-size: 0.78rem;
+      border-right: 1px solid #eee;
+      text-align: center;
+    }
+    .bd-q { color: #444; }
+    .bd-given-correct { color: var(--success); font-weight: 500; }
+    .bd-given-wrong   { color: var(--error); font-weight: 500; text-decoration: line-through; opacity: 0.7; }
+    .bd-correct-ans   { color: var(--success); font-weight: 600; }
+    .bd-tick { color: var(--success); font-size: 1rem; }
+    .bd-cross { color: var(--error); font-size: 1rem; }
+
+    .retry-btn {
+      margin-top: 16px;
+      padding: 12px 28px;
+      background: var(--ink);
+      color: var(--paper);
+      border: none;
+      border-radius: 4px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.88rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: opacity 0.2s;
+    }
+    .retry-btn:hover { opacity: 0.8; }
 
     /* COMING SOON */
     .coming-soon {
@@ -421,6 +503,7 @@
 // ── UNIT DATA ────────────────────────────────────────────────────────────────
 
 const UNITS = {
+
   1: {
     title: "Unit 1 — Grammar",
     topic: "Present time: present simple, present continuous, present perfect simple, present perfect continuous, stative verbs",
@@ -702,68 +785,161 @@ function saveAnswer(exId, qNum, val) {
 
 // ── SCORING ──────────────────────────────────────────────────────────────────
 
+function isCorrect(given, expected) {
+  const accepted = expected.split('/').map(s => s.trim().toLowerCase());
+  const givenClean = given.toLowerCase().replace(/\s+/g, ' ').trim();
+  return accepted.some(a => givenClean === a || givenClean.includes(a));
+}
+
+function stripHtml(html) {
+  return html.replace(/<[^>]+>/g, '').replace(/\s+/g, ' ').trim();
+}
+
 function scoreUnit() {
   const unit = UNITS[currentUnit];
   let total = 0, correct = 0;
-  let details = [];
+  let rows = []; // {exId, exLetter, qNum, qText, given, expected, ok}
 
   unit.exercises.forEach(ex => {
     if (ex.type === 'match') {
-      ex.leftItems.forEach((_, i) => {
+      ex.leftItems.forEach((left, i) => {
         total++;
         const given = (answers[ex.id] && answers[ex.id][i+1]) || '';
         const expected = ex.answers[i];
-        if (given.toUpperCase() === expected.toUpperCase()) correct++;
-        else details.push(`${ex.id}${i+1}: expected ${expected}, got ${given || '(blank)'}`);
+        const ok = given.toUpperCase() === expected.toUpperCase();
+        if (ok) correct++;
+        rows.push({ exId: ex.id, exLetter: ex.id, qNum: i+1,
+          qText: left, given: given || '—', expected, ok });
+        // inline feedback on select
+        const selects = document.querySelectorAll(`.match-select`);
+        if (selects[i]) selects[i].style.borderColor = ok ? 'var(--success)' : 'var(--error)';
       });
     } else {
       ex.questions.forEach(q => {
         total++;
         const given = (answers[ex.id] && answers[ex.id][q.num]) || '';
-        const expected = q.answer;
-        // Accept any of the slash-separated acceptable answers
-        const accepted = expected.split('/').map(s => s.trim().toLowerCase());
-        const givenClean = given.toLowerCase().replace(/\s+/g, ' ').trim();
-        if (accepted.some(a => givenClean === a || givenClean.includes(a))) {
-          correct++;
-          // Visual feedback for text inputs
-          const inp = document.getElementById(`inp_${ex.id}_${q.num}`);
-          if (inp) inp.classList.add('correct');
-        } else {
-          const inp = document.getElementById(`inp_${ex.id}_${q.num}`);
-          if (inp) { inp.classList.add('incorrect'); }
-          details.push(`${ex.id}${q.num}: expected "${expected}", got "${given || '(blank)'}"`);
+        const ok = isCorrect(given, q.answer);
+        if (ok) correct++;
+
+        // Inline feedback on text inputs
+        const inp = document.getElementById(`inp_${ex.id}_${q.num}`);
+        if (inp) {
+          inp.classList.remove('correct', 'incorrect');
+          inp.classList.add(ok ? 'correct' : 'incorrect');
+          if (!ok) inp.title = `Correct: ${q.answer}`;
         }
+        // Inline feedback on radio/MCQ — highlight correct option label
+        if (!ok && (ex.type === 'choice2' || ex.type === 'mcq')) {
+          const radios = document.querySelectorAll(`input[name="q_${ex.id}_${q.num}"]`);
+          radios.forEach(r => {
+            if (r.value === q.answer || r.value.toUpperCase() === q.answer.toUpperCase()) {
+              r.closest('label').style.background = 'var(--success-bg)';
+              r.closest('label').style.borderRadius = '4px';
+            } else if (r.checked) {
+              r.closest('label').style.background = 'var(--error-bg)';
+              r.closest('label').style.borderRadius = '4px';
+            }
+          });
+        }
+
+        rows.push({
+          exId: ex.id, exLetter: ex.id, qNum: q.num,
+          qText: stripHtml(q.text),
+          given: given || '—',
+          expected: q.answer,
+          ok
+        });
       });
     }
   });
 
-  return { total, correct, details };
+  return { total, correct, rows };
 }
 
 function submitUnit() {
   const name = localStorage.getItem('studentName') || 'Unknown';
-  const { total, correct, details } = scoreUnit();
+  const { total, correct, rows } = scoreUnit();
   const pct = Math.round((correct / total) * 100);
+  const wrong = rows.filter(r => !r.ok);
 
   const resultBox = document.getElementById('result-box');
-  let cls = pct >= 80 ? 'result-excellent' : pct >= 60 ? 'result-good' : 'result-ok';
-  let msg = pct >= 80 ? '🎉 Excellent work!' : pct >= 60 ? '👍 Good effort — review the mistakes.' : '📚 Keep practising — review this unit again.';
+  const headerCls = pct >= 80 ? 'result-excellent' : pct >= 60 ? 'result-good' : 'result-ok';
+  const emoji = pct >= 80 ? '🎉' : pct >= 60 ? '👍' : '📚';
+  const msg = pct >= 80 ? 'Excellent work!' : pct >= 60 ? 'Good effort — review your mistakes below.' : 'Keep practising — go through the corrections carefully.';
 
-  resultBox.className = 'result-box show ' + cls;
+  // Build per-question breakdown
+  const wrongRows = wrong.map(r => `
+    <div class="breakdown-row wrong-row">
+      <div class="bd-cell bd-num">${r.exLetter}${r.qNum}</div>
+      <div class="bd-cell bd-q">${r.qText.length > 60 ? r.qText.slice(0, 60) + '…' : r.qText}</div>
+      <div class="bd-cell bd-given-wrong">${r.given}</div>
+      <div class="bd-cell bd-correct-ans">✓ ${r.expected}</div>
+    </div>`).join('');
+
+  const correctRows = rows.filter(r => r.ok).map(r => `
+    <div class="breakdown-row correct-row">
+      <div class="bd-cell bd-num">✓</div>
+      <div class="bd-cell bd-q" style="color:#888;font-size:0.78rem">${r.exLetter}${r.qNum} — ${r.qText.length > 55 ? r.qText.slice(0,55)+'…' : r.qText}</div>
+      <div class="bd-cell bd-given-correct" style="font-size:0.78rem">${r.given}</div>
+      <div class="bd-cell" style="font-size:0.78rem;color:#aaa">—</div>
+    </div>`).join('');
+
+  resultBox.className = 'show';
   resultBox.innerHTML = `
-    <div class="result-score">${correct} / ${total}</div>
-    <div class="result-msg"><strong>${pct}%</strong> — ${msg}</div>
-    ${details.length ? `<div class="result-detail"><strong>Review these:</strong><br/>${details.slice(0, 10).join('<br/>')}</div>` : ''}
-  `;
-  resultBox.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    <div class="result-header ${headerCls}">
+      <div class="result-score">${correct}<span style="font-size:1.8rem;opacity:0.5"> / ${total}</span></div>
+      <div class="result-right-col">
+        <div class="result-msg">${emoji} ${pct}% — ${msg}</div>
+        <div class="result-sub">${wrong.length === 0 ? 'Perfect score! No mistakes.' : `${wrong.length} mistake${wrong.length > 1 ? 's' : ''} to review · ${correct} correct`}</div>
+      </div>
+    </div>
 
-  // Send to Google Sheets
+    ${wrong.length > 0 ? `
+    <div class="result-breakdown">
+      <div class="breakdown-title">
+        ❌ Mistakes to correct
+        <span class="bd-counts">${wrong.length} item${wrong.length > 1 ? 's' : ''}</span>
+      </div>
+      <div class="breakdown-row header-row">
+        <div class="bd-cell bd-num">#</div>
+        <div class="bd-cell">Question</div>
+        <div class="bd-cell">Your answer</div>
+        <div class="bd-cell">Correct answer</div>
+      </div>
+      ${wrongRows}
+    </div>` : ''}
+
+    ${correct > 0 ? `
+    <details style="margin-top:12px">
+      <summary style="cursor:pointer;font-size:0.82rem;color:#888;padding:8px 0;user-select:none">
+        ✅ Show correct answers (${correct})
+      </summary>
+      <div class="result-breakdown" style="margin-top:6px">
+        <div class="breakdown-row header-row">
+          <div class="bd-cell bd-num">#</div>
+          <div class="bd-cell">Question</div>
+          <div class="bd-cell">Your answer</div>
+          <div class="bd-cell"></div>
+        </div>
+        ${correctRows}
+      </div>
+    </details>` : ''}
+
+    <button class="retry-btn" onclick="retryUnit()">↩ Try again</button>
+  `;
+
+  resultBox.scrollIntoView({ behavior: 'smooth', block: 'start' });
   sendToSheets(name, `Unit ${currentUnit}`, correct, total, pct);
 }
 
+function retryUnit() {
+  answers = {};
+  loadUnit(currentUnit);
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
 function sendToSheets(name, unit, correct, total, pct) {
-  const SCRIPT_URL = 'YOUR_GOOGLE_APPS_SCRIPT_URL_HERE';
+  const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwL3uhZasnCex4w6izyOzTlMc7jRRo7PkH6co0zpM-A1-mtkGqjdLCCn7UyWtK_PF4Rpw/exec';
   if (SCRIPT_URL === 'YOUR_GOOGLE_APPS_SCRIPT_URL_HERE') return; // not configured yet
 
   const payload = {
