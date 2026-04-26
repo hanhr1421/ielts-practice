@@ -4,7 +4,7 @@
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Listening — IELTS Practice Hub</title>
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     :root {
@@ -14,11 +14,7 @@
     }
     body { font-family: 'DM Sans', sans-serif; background: var(--paper); color: var(--ink); min-height: 100vh; }
 
-    header { border-bottom: 2px solid var(--ink); padding: 0 48px; display: flex; align-items: center; justify-content: space-between; height: 64px; }
-    .logo { font-family: 'Playfair Display', serif; font-size: 1.3rem; font-weight: 900; text-decoration: none; color: var(--ink); }
-    .logo span { color: var(--accent); }
-    .back-link { font-size: 0.85rem; color: #666; text-decoration: none; }
-    .back-link:hover { color: var(--ink); }
+    /* old header removed — using topnav */
 
     .page-header { padding: 36px 48px 28px; border-bottom: 1px solid #ccc; display: flex; align-items: flex-end; justify-content: space-between; flex-wrap: wrap; gap: 16px; }
     .page-header-left .label { font-size: 0.72rem; font-weight: 500; letter-spacing: 0.15em; text-transform: uppercase; color: var(--blue); margin-bottom: 8px; }
@@ -144,16 +140,24 @@
 </head>
 <body>
 
-<header>
-  <a class="logo" href="index.html">IELTS <span>Practice</span> Hub</a>
-  <a class="back-link" href="index.html">← Back to Dashboard</a>
-</header>
+<nav class="topnav" style="background:#fff;border-bottom:1px solid #e5e5e5;padding:0 24px;display:flex;align-items:center;height:56px;position:sticky;top:0;z-index:100;">
+  <a style="font-family:Inter,system-ui,sans-serif;font-weight:700;font-size:1.05rem;margin-right:32px;white-space:nowrap;text-decoration:none;color:#1a1a1a;" href="index.html">IELTS <span style="color:#2563eb">Hub</span></a>
+  <div style="display:flex;gap:4px;overflow-x:auto;">
+    <a href="index.html" style="padding:8px 14px;border-radius:6px;font-size:0.82rem;font-weight:500;text-decoration:none;color:#6b6b6b;font-family:Inter,system-ui,sans-serif;">Dashboard</a>
+    <a href="listening.html" style="padding:8px 14px;border-radius:6px;font-size:0.82rem;font-weight:500;text-decoration:none;background:#eff6ff;color:#2563eb;font-family:Inter,system-ui,sans-serif;">Listening</a>
+    <a href="reading.html" style="padding:8px 14px;border-radius:6px;font-size:0.82rem;font-weight:500;text-decoration:none;color:#6b6b6b;font-family:Inter,system-ui,sans-serif;">Reading</a>
+    <a href="writing.html" style="padding:8px 14px;border-radius:6px;font-size:0.82rem;font-weight:500;text-decoration:none;color:#6b6b6b;font-family:Inter,system-ui,sans-serif;">Writing</a>
+    <a href="speaking.html" style="padding:8px 14px;border-radius:6px;font-size:0.82rem;font-weight:500;text-decoration:none;color:#6b6b6b;font-family:Inter,system-ui,sans-serif;">Speaking</a>
+    <a href="shadowing.html" style="padding:8px 14px;border-radius:6px;font-size:0.82rem;font-weight:500;text-decoration:none;color:#6b6b6b;font-family:Inter,system-ui,sans-serif;">Shadowing</a>
+    <a href="vocab.html" style="padding:8px 14px;border-radius:6px;font-size:0.82rem;font-weight:500;text-decoration:none;color:#6b6b6b;font-family:Inter,system-ui,sans-serif;">Vocab</a>
+  </div>
+</nav>
 
 <div class="page-header">
   <div class="page-header-left">
-    <div class="label">Section 01</div>
-    <h1>Listening</h1>
-    <p>Cambridge Practice Tests for IELTS 1 · 4 sections · 40 questions per test</p>
+    <div class="label">Listening</div>
+    <h1>Listening Practice</h1>
+    <p>Cambridge Practice Tests · 4 sections · 40 questions per test</p>
   </div>
   <div class="student-badge" id="student-badge">Student</div>
 </div>
@@ -374,6 +378,45 @@ let currentTest = 't1';
 let answers = {};
 let checkboxSel = {}; // groupId -> Set of selected keys
 
+// ── GOOGLE DRIVE AUDIO ───────────────────────────────────────────────────────
+const SHEET_URL = "https://script.google.com/macros/s/AKfycbwL3uhZasnCex4w6izyOzTlMc7jRRo7PkH6co0zpM-A1-mtkGqjdLCCn7UyWtK_PF4Rpw/exec";
+let driveAudioCache = {}; // cambridge -> { fileName: driveUrl }
+
+async function fetchDriveAudio(cambridge) {
+  if (driveAudioCache[cambridge]) return driveAudioCache[cambridge];
+  try {
+    const r = await fetch(SHEET_URL + '?action=audio&cambridge=' + cambridge);
+    const data = await r.json();
+    const map = {};
+    (data.files || []).forEach(f => { map[f.name] = f.url; });
+    driveAudioCache[cambridge] = map;
+    return map;
+  } catch (e) { return {}; }
+}
+
+function resolveDriveAudio(localPath, audioMap) {
+  // localPath like "audio/Test_1_-_Section_1.mp3"
+  // Try to match against Drive file names like "Test1_Section1.mp3"
+  if (!audioMap || Object.keys(audioMap).length === 0) return localPath;
+  const match = localPath.match(/Test[_\s]*(\d+)[_\s]*[-]*[_\s]*Section[_\s]*(\d+)/i);
+  if (!match) return localPath;
+  const t = match[1], s = match[2];
+  // Try common naming patterns
+  const patterns = [
+    `Test${t}_Section${s}.mp3`,
+    `Test_${t}_-_Section_${s}.mp3`,
+    `Test${t}_Section${s}.MP3`
+  ];
+  for (const p of patterns) {
+    if (audioMap[p]) return audioMap[p];
+  }
+  // Fuzzy: find any file containing TestX and SectionY
+  for (const [name, url] of Object.entries(audioMap)) {
+    if (name.includes('Test' + t) && name.includes('Section' + s)) return url;
+  }
+  return localPath;
+}
+
 // ── RENDER ────────────────────────────────────────────────────────────────────
 function loadTest(id) {
   currentTest = id;
@@ -401,6 +444,22 @@ function loadTest(id) {
   <div id="result-box"></div>`;
   content.innerHTML = html;
   window.scrollTo(0, 0);
+
+  // Resolve audio from Google Drive (async, updates audio sources after render)
+  fetchDriveAudio("1").then(audioMap => {
+    test.sections.forEach(sec => {
+      const driveUrl = resolveDriveAudio(sec.audio, audioMap);
+      if (driveUrl !== sec.audio) {
+        const audioEl = document.getElementById('audio-s' + sec.num);
+        if (audioEl) { audioEl.src = driveUrl; audioEl.load(); }
+        const noteEl = document.getElementById('audio-note-s' + sec.num);
+        if (noteEl) { noteEl.textContent = 'Audio loaded from Google Drive'; noteEl.style.color = '#4a9'; }
+      } else {
+        const noteEl = document.getElementById('audio-note-s' + sec.num);
+        if (noteEl) { noteEl.textContent = 'Using local audio file'; }
+      }
+    });
+  });
 }
 
 function renderSection(sec) {
@@ -410,13 +469,13 @@ function renderSection(sec) {
       <div class="section-qs">${sec.qRange}</div>
     </div>
     <div class="audio-wrap">
-      <span class="audio-label">▶ AUDIO</span>
-      <audio controls preload="none" style="flex:1;height:34px">
+      <span class="audio-label">AUDIO</span>
+      <audio controls preload="none" style="flex:1;height:34px" id="audio-s${sec.num}">
         <source src="${sec.audio}" type="audio/mpeg"/>
-        Audio not supported — ensure MP3 files are in the audio/ folder.
+        Audio not supported.
       </audio>
     </div>
-    <div class="audio-note">📁 MP3 files must be in an <strong>audio/</strong> subfolder alongside this HTML file when deployed.</div>
+    <div class="audio-note" id="audio-note-s${sec.num}">Loading audio from Google Drive...</div>
     <div class="questions-area">`;
   sec.groups.forEach(g => { html += renderGroup(g); });
   html += `</div></div>`;

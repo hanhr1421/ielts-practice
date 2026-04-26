@@ -1,1 +1,440 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><title>Reading — IELTS Practice Hub</title><link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/><style>*{box-sizing:border-box;margin:0;padding:0}:root{--ink:#0f0e0d;--paper:#f5f0e8;--cream:#ede7d9;--accent:#c8402a}body{font-family:'DM Sans',sans-serif;background:var(--paper);color:var(--ink);min-height:100vh;display:flex;flex-direction:column}header{border-bottom:2px solid var(--ink);padding:0 48px;display:flex;align-items:center;justify-content:space-between;height:64px}.logo{font-family:'Playfair Display',serif;font-size:1.3rem;font-weight:900;text-decoration:none;color:var(--ink)}.logo span{color:var(--accent)}.back{font-size:.85rem;color:#666;text-decoration:none}.back:hover{color:var(--ink)}.center{flex:1;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:20px;padding:48px;text-align:center}.icon{font-size:4rem}h1{font-family:'Playfair Display',serif;font-size:clamp(2rem,5vw,3rem);font-weight:900;letter-spacing:-.03em}p{color:#666;max-width:400px;font-size:.95rem;line-height:1.65}.tag{display:inline-block;background:var(--cream);border:1px solid #ccc;padding:6px 16px;border-radius:20px;font-size:.75rem;font-weight:500;letter-spacing:.1em;text-transform:uppercase;color:#888;margin-top:8px}</style></head><body><header><a class="logo" href="index.html">IELTS <span>Practice</span> Hub</a><a class="back" href="index.html">← Back</a></header><div class="center"><div class="icon">📖</div><h1>Reading</h1><p>Beginner and Intermediate reading passages are being prepared. Check back soon!</p><div class="tag">Coming soon</div></div></body></html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Reading - IELTS Practice Hub</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #fafafa; --surface: #ffffff; --border: #e5e5e5;
+      --text: #1a1a1a; --text2: #6b6b6b; --text3: #999;
+      --blue: #2563eb; --blue-bg: #eff6ff; --green: #16a34a; --green-bg: #f0fdf4;
+      --red: #dc2626; --red-bg: #fef2f2; --orange: #ea580c; --orange-bg: #fff7ed;
+      --radius: 8px;
+    }
+    body { font-family: 'Inter', system-ui, sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
+
+    /* NAV */
+    .topnav { background: var(--surface); border-bottom: 1px solid var(--border); padding: 0 24px; display: flex; align-items: center; height: 56px; position: sticky; top: 0; z-index: 100; }
+    .topnav-brand { font-weight: 700; font-size: 1.05rem; margin-right: 32px; white-space: nowrap; text-decoration: none; color: var(--text); }
+    .topnav-brand span { color: var(--blue); }
+    .topnav-links { display: flex; gap: 4px; overflow-x: auto; }
+    .topnav-links a { padding: 8px 14px; border-radius: 6px; font-size: 0.82rem; font-weight: 500; text-decoration: none; color: var(--text2); white-space: nowrap; transition: background 0.15s, color 0.15s; }
+    .topnav-links a:hover { background: var(--bg); color: var(--text); }
+    .topnav-links a.active { background: var(--blue-bg); color: var(--blue); }
+
+    /* LAYOUT */
+    .layout { display: flex; min-height: calc(100vh - 56px); }
+    .sidebar { width: 220px; flex-shrink: 0; border-right: 1px solid var(--border); background: var(--surface); overflow-y: auto; }
+    .sidebar-section { padding: 16px 16px 6px; font-size: 0.68rem; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: var(--text3); }
+    .sidebar-btn {
+      display: block; width: 100%; padding: 9px 16px; background: none; border: none;
+      text-align: left; cursor: pointer; font-family: inherit; font-size: 0.82rem;
+      color: var(--text2); transition: background 0.12s;
+    }
+    .sidebar-btn:hover { background: #f5f5f5; color: var(--text); }
+    .sidebar-btn.active { background: var(--blue-bg); color: var(--blue); font-weight: 600; }
+    .sidebar-btn.disabled { color: var(--text3); cursor: default; }
+    .sidebar-btn.disabled:hover { background: none; }
+
+    /* CONTENT */
+    .content { flex: 1; padding: 32px; max-width: 800px; }
+    .content-header { margin-bottom: 24px; }
+    .content-header h1 { font-size: 1.3rem; font-weight: 700; margin-bottom: 4px; }
+    .content-header p { font-size: 0.85rem; color: var(--text2); }
+
+    /* PASSAGE */
+    .passage-block {
+      background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+      margin-bottom: 20px; overflow: hidden;
+    }
+    .passage-title { padding: 14px 20px; font-weight: 600; font-size: 0.9rem; border-bottom: 1px solid var(--border); background: #f9f9f9; }
+    .passage-text { padding: 20px; font-size: 0.88rem; line-height: 1.8; color: #333; white-space: pre-wrap; }
+    .passage-img { max-width: 100%; padding: 16px 20px; }
+    .passage-img img { max-width: 100%; border-radius: 4px; border: 1px solid var(--border); }
+
+    /* QUESTIONS */
+    .questions-block {
+      background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+      margin-bottom: 20px; overflow: hidden;
+    }
+    .q-section-title { padding: 12px 20px; font-size: 0.78rem; font-weight: 600; background: var(--text); color: #fff; letter-spacing: 0.04em; }
+    .q-instruction { padding: 12px 20px; font-size: 0.82rem; color: var(--text2); font-style: italic; border-bottom: 1px solid #f0f0f0; }
+    .q-list { padding: 16px 20px; }
+    .q-item { display: flex; gap: 10px; align-items: baseline; margin-bottom: 12px; }
+    .q-num { font-size: 0.72rem; font-weight: 700; color: var(--blue); background: var(--blue-bg); border-radius: 10px; padding: 1px 7px; flex-shrink: 0; }
+    .q-text { font-size: 0.85rem; line-height: 1.6; flex: 1; }
+    .q-input {
+      padding: 5px 10px; border: 1px solid var(--border); border-radius: 4px;
+      font-family: inherit; font-size: 0.85rem; width: 180px;
+    }
+    .q-input:focus { outline: none; border-color: var(--blue); }
+    .q-input.correct { border-color: var(--green); background: var(--green-bg); }
+    .q-input.incorrect { border-color: var(--red); background: var(--red-bg); }
+
+    /* MCQ */
+    .mcq-options { display: flex; flex-direction: column; gap: 4px; margin-left: 32px; margin-top: 6px; }
+    .mcq-opt { display: flex; align-items: center; gap: 8px; padding: 6px 10px; border-radius: 4px; cursor: pointer; font-size: 0.83rem; border: 1px solid transparent; }
+    .mcq-opt:hover { background: #f5f5f5; }
+    .mcq-opt input { accent-color: var(--blue); }
+    .mcq-opt.correct-hl { background: var(--green-bg); border-color: var(--green); }
+    .mcq-opt.wrong-hl { background: var(--red-bg); border-color: var(--red); }
+
+    /* TFNG */
+    .tfng-select { padding: 5px 10px; border: 1px solid var(--border); border-radius: 4px; font-family: inherit; font-size: 0.83rem; }
+    .tfng-select:focus { outline: none; border-color: var(--blue); }
+
+    /* TIMER */
+    .timer-bar {
+      background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+      padding: 12px 20px; margin-bottom: 20px;
+      display: flex; align-items: center; gap: 12px; flex-wrap: wrap;
+    }
+    .timer-bar label { font-size: 0.82rem; font-weight: 500; }
+    .timer-display { font-size: 1.3rem; font-weight: 700; font-variant-numeric: tabular-nums; min-width: 80px; }
+    .timer-btn {
+      padding: 6px 16px; border-radius: 6px; border: 1px solid var(--border); background: var(--surface);
+      font-family: inherit; font-size: 0.8rem; font-weight: 500; cursor: pointer;
+    }
+    .timer-btn:hover { background: #f5f5f5; }
+    .timer-btn.primary { background: var(--blue); color: #fff; border-color: var(--blue); }
+    .timer-btn.primary:hover { opacity: 0.9; }
+    .timer-toggle { font-size: 0.78rem; color: var(--text3); margin-left: auto; display: flex; align-items: center; gap: 6px; }
+    .timer-toggle input { accent-color: var(--blue); }
+
+    /* SUBMIT */
+    .submit-bar {
+      background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+      padding: 20px; margin-top: 24px;
+    }
+    .submit-btn {
+      padding: 10px 28px; background: var(--blue); color: #fff; border: none;
+      border-radius: 6px; font-family: inherit; font-size: 0.9rem; font-weight: 500; cursor: pointer;
+    }
+    .submit-btn:hover { opacity: 0.9; }
+
+    /* RESULT */
+    .result-box { margin-top: 16px; padding: 16px 20px; border-radius: var(--radius); display: none; }
+    .result-box.show { display: block; }
+    .result-score { font-size: 1.8rem; font-weight: 700; }
+    .result-msg { font-size: 0.85rem; color: var(--text2); margin-top: 4px; }
+
+    /* COMING SOON */
+    .coming-soon { display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 300px; gap: 12px; color: var(--text3); text-align: center; }
+    .coming-soon h3 { font-size: 1.1rem; font-weight: 600; }
+
+    @media (max-width: 768px) {
+      .layout { flex-direction: column; }
+      .sidebar { width: 100%; border-right: none; border-bottom: 1px solid var(--border); display: flex; flex-wrap: wrap; padding: 8px; gap: 4px; }
+      .sidebar-section { display: none; }
+      .sidebar-btn { width: auto; padding: 6px 12px; border-radius: 6px; font-size: 0.78rem; }
+      .content { padding: 20px 16px; }
+    }
+  </style>
+</head>
+<body>
+
+<nav class="topnav">
+  <a class="topnav-brand" href="index.html">IELTS <span>Hub</span></a>
+  <div class="topnav-links">
+    <a href="index.html">Dashboard</a>
+    <a href="listening.html">Listening</a>
+    <a href="reading.html" class="active">Reading</a>
+    <a href="writing.html">Writing</a>
+    <a href="speaking.html">Speaking</a>
+    <a href="shadowing.html">Shadowing</a>
+    <a href="vocab.html">Vocab</a>
+  </div>
+</nav>
+
+<div class="layout">
+  <nav class="sidebar" id="sidebar"></nav>
+  <main class="content" id="main-content">
+    <div class="content-header">
+      <h1>Reading</h1>
+      <p>Select a Cambridge test from the sidebar to begin.</p>
+    </div>
+    <div class="coming-soon">
+      <div style="font-size:2.5rem">&#x1F4D6;</div>
+      <h3>Select a test to start practicing</h3>
+      <p style="font-size:0.82rem; max-width:320px">Choose a Cambridge version and test from the sidebar. Questions and passages will appear here.</p>
+    </div>
+  </main>
+</div>
+
+<script>
+const CAMBRIDGE_VERSIONS = [9,10,11,12,13,14,15,16,17,18,19,20];
+const TESTS_PER_VERSION = 4;
+const SHEET_URL = "https://script.google.com/macros/s/AKfycbwL3uhZasnCex4w6izyOzTlMc7jRRo7PkH6co0zpM-A1-mtkGqjdLCCn7UyWtK_PF4Rpw/exec";
+
+// ── TEST DATA (placeholder - will be populated per Cambridge version) ────
+const TESTS = {};
+
+// ── Build sidebar ────────────────────────────────────────────────────────
+function buildSidebar() {
+  const sb = document.getElementById('sidebar');
+  let html = '';
+  CAMBRIDGE_VERSIONS.forEach(v => {
+    html += `<div class="sidebar-section">Cambridge ${v}</div>`;
+    for (let t = 1; t <= TESTS_PER_VERSION; t++) {
+      const key = `c${v}_t${t}`;
+      const hasData = TESTS[key];
+      const cls = hasData ? '' : 'disabled';
+      html += `<button class="sidebar-btn ${cls}" data-key="${key}" onclick="loadTest('${key}')">${hasData ? '' : ''}Test ${t}</button>`;
+    }
+  });
+  sb.innerHTML = html;
+}
+
+// ── Load test ────────────────────────────────────────────────────────────
+let currentTest = null;
+let answers = {};
+let timerInterval = null;
+let timerSeconds = 0;
+let timerRunning = false;
+
+function loadTest(key) {
+  const test = TESTS[key];
+
+  // Update sidebar active state
+  document.querySelectorAll('.sidebar-btn').forEach(b => b.classList.remove('active'));
+  const btn = document.querySelector(`[data-key="${key}"]`);
+  if (btn) btn.classList.add('active');
+
+  if (!test) {
+    document.getElementById('main-content').innerHTML = `
+      <div class="content-header">
+        <h1>Reading</h1>
+        <p>${key.replace('c','Cambridge ').replace('_t',' - Test ')}</p>
+      </div>
+      <div class="coming-soon">
+        <div style="font-size:2.5rem">&#x1F6A7;</div>
+        <h3>Coming Soon</h3>
+        <p style="font-size:0.82rem">This test's content is being prepared.</p>
+      </div>`;
+    return;
+  }
+
+  currentTest = key;
+  answers = {};
+  clearTimer();
+
+  let html = `
+    <div class="content-header">
+      <h1>${test.title}</h1>
+      <p>${test.subtitle || 'Reading test with passages and questions'}</p>
+    </div>
+
+    <div class="timer-bar">
+      <label>Timer:</label>
+      <span class="timer-display" id="timer-display">00:00</span>
+      <button class="timer-btn primary" onclick="toggleTimer()" id="timer-btn">Start</button>
+      <button class="timer-btn" onclick="resetTimer()">Reset</button>
+      <div class="timer-toggle">
+        <input type="checkbox" id="timer-enabled" checked />
+        <label for="timer-enabled">Show timer</label>
+      </div>
+    </div>`;
+
+  // Render passages and questions
+  test.sections.forEach((section, si) => {
+    // Passage
+    if (section.passage) {
+      html += `
+        <div class="passage-block">
+          <div class="passage-title">${section.passageTitle || 'Reading Passage ' + (si+1)}</div>
+          <div class="passage-text">${section.passage}</div>
+          ${section.image ? `<div class="passage-img"><img src="${section.image}" alt="passage image" /></div>` : ''}
+        </div>`;
+    }
+
+    // Questions
+    html += `<div class="questions-block">
+      <div class="q-section-title">${section.qRange || 'Questions'}</div>`;
+
+    section.groups.forEach(group => {
+      html += `<div class="q-instruction">${group.instruction}</div>`;
+      html += `<div class="q-list">`;
+
+      if (group.type === 'mcq') {
+        group.questions.forEach(q => {
+          html += `<div class="q-item"><span class="q-num">${q.num}</span><div class="q-text">${q.stem}
+            <div class="mcq-options">${q.options.map((opt, oi) =>
+              `<label class="mcq-opt" id="opt-${q.num}-${oi}">
+                <input type="radio" name="q${q.num}" value="${opt.charAt(0)}" onchange="answers[${q.num}]=this.value" />
+                ${opt}
+              </label>`
+            ).join('')}</div></div></div>`;
+        });
+      } else if (group.type === 'tfng') {
+        group.questions.forEach(q => {
+          html += `<div class="q-item">
+            <span class="q-num">${q.num}</span>
+            <span class="q-text">${q.stem}</span>
+            <select class="tfng-select" onchange="answers[${q.num}]=this.value">
+              <option value="">--</option>
+              <option value="TRUE">TRUE</option>
+              <option value="FALSE">FALSE</option>
+              <option value="NOT GIVEN">NOT GIVEN</option>
+            </select>
+          </div>`;
+        });
+      } else if (group.type === 'ynng') {
+        group.questions.forEach(q => {
+          html += `<div class="q-item">
+            <span class="q-num">${q.num}</span>
+            <span class="q-text">${q.stem}</span>
+            <select class="tfng-select" onchange="answers[${q.num}]=this.value">
+              <option value="">--</option>
+              <option value="YES">YES</option>
+              <option value="NO">NO</option>
+              <option value="NOT GIVEN">NOT GIVEN</option>
+            </select>
+          </div>`;
+        });
+      } else if (group.type === 'matching') {
+        group.questions.forEach(q => {
+          html += `<div class="q-item">
+            <span class="q-num">${q.num}</span>
+            <span class="q-text">${q.stem}</span>
+            <input class="q-input" style="width:60px" placeholder="A-${String.fromCharCode(64 + (group.optionCount || 8))}" oninput="answers[${q.num}]=this.value.toUpperCase()" />
+          </div>`;
+        });
+      } else {
+        // Default: text/fill-in
+        group.questions.forEach(q => {
+          html += `<div class="q-item">
+            <span class="q-num">${q.num}</span>
+            <span class="q-text">${q.stem || ''}</span>
+            <input class="q-input" id="inp-${q.num}" placeholder="Answer..." oninput="answers[${q.num}]=this.value" />
+          </div>`;
+        });
+      }
+
+      html += `</div>`;
+    });
+
+    html += `</div>`;
+  });
+
+  // Submit
+  html += `
+    <div class="submit-bar">
+      <button class="submit-btn" onclick="submitTest()">Submit Answers</button>
+      <div class="result-box" id="result-box"></div>
+    </div>`;
+
+  document.getElementById('main-content').innerHTML = html;
+}
+
+// ── Timer ────────────────────────────────────────────────────────────────
+function toggleTimer() {
+  if (timerRunning) { pauseTimer(); } else { startTimer(); }
+}
+function startTimer() {
+  timerRunning = true;
+  document.getElementById('timer-btn').textContent = 'Pause';
+  timerInterval = setInterval(() => {
+    timerSeconds++;
+    updateTimerDisplay();
+  }, 1000);
+}
+function pauseTimer() {
+  timerRunning = false;
+  document.getElementById('timer-btn').textContent = 'Start';
+  clearInterval(timerInterval);
+}
+function resetTimer() {
+  pauseTimer();
+  timerSeconds = 0;
+  updateTimerDisplay();
+}
+function clearTimer() {
+  if (timerInterval) clearInterval(timerInterval);
+  timerRunning = false;
+  timerSeconds = 0;
+}
+function updateTimerDisplay() {
+  const m = Math.floor(timerSeconds / 60).toString().padStart(2, '0');
+  const s = (timerSeconds % 60).toString().padStart(2, '0');
+  const el = document.getElementById('timer-display');
+  if (el) el.textContent = `${m}:${s}`;
+}
+
+// ── Submit ───────────────────────────────────────────────────────────────
+function submitTest() {
+  const test = TESTS[currentTest];
+  if (!test) return;
+
+  let correct = 0, total = 0;
+
+  test.sections.forEach(section => {
+    section.groups.forEach(group => {
+      group.questions.forEach(q => {
+        total++;
+        const given = (answers[q.num] || '').trim().toLowerCase();
+        const expected = (q.answer || '').trim().toLowerCase();
+
+        if (isCorrect(given, expected)) {
+          correct++;
+          highlightQ(q.num, true);
+        } else {
+          highlightQ(q.num, false);
+        }
+      });
+    });
+  });
+
+  const pct = total > 0 ? Math.round(100 * correct / total) : 0;
+  const cls = pct >= 80 ? 'green' : pct >= 50 ? 'orange' : 'red';
+  const rb = document.getElementById('result-box');
+  rb.className = 'result-box show';
+  rb.style.background = `var(--${cls}-bg)`;
+  rb.innerHTML = `
+    <div class="result-score" style="color:var(--${cls})">${correct}/${total}</div>
+    <div class="result-msg">${pct}% correct${timerSeconds > 0 ? ' | Time: ' + Math.floor(timerSeconds/60) + 'm ' + (timerSeconds%60) + 's' : ''}</div>`;
+  pauseTimer();
+
+  // Save locally
+  const result = {
+    date: new Date().toISOString().substring(0,10),
+    section: 'Reading',
+    unit: currentTest.replace('c','Cambridge ').replace('_t',' Test '),
+    correct, total, pct
+  };
+  const local = JSON.parse(localStorage.getItem('ielts_results') || '[]');
+  local.push(result);
+  localStorage.setItem('ielts_results', JSON.stringify(local));
+
+  // Send to Google Sheets
+  const name = localStorage.getItem('studentName') || 'Unknown';
+  fetch(SHEET_URL, {
+    method: 'POST', mode: 'no-cors',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      timestamp: new Date().toISOString(), name,
+      section: 'Reading', unit: result.unit,
+      correct, total, pct, notes: ''
+    })
+  }).catch(() => {});
+}
+
+function isCorrect(given, expected) {
+  if (!given || !expected) return false;
+  // Handle slash-separated alternatives
+  const alts = expected.split('/').map(a => a.trim().toLowerCase());
+  return alts.some(a => a === given);
+}
+
+function highlightQ(num, correct) {
+  const inp = document.getElementById('inp-' + num);
+  if (inp) { inp.classList.add(correct ? 'correct' : 'incorrect'); }
+}
+
+// ── Init ─────────────────────────────────────────────────────────────────
+buildSidebar();
+</script>
+</body>
+</html>

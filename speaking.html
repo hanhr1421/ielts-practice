@@ -1,1 +1,442 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><title>Speaking — IELTS Practice Hub</title><link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/><style>*{box-sizing:border-box;margin:0;padding:0}:root{--ink:#0f0e0d;--paper:#f5f0e8;--cream:#ede7d9;--accent:#c8402a}body{font-family:'DM Sans',sans-serif;background:var(--paper);color:var(--ink);min-height:100vh;display:flex;flex-direction:column}header{border-bottom:2px solid var(--ink);padding:0 48px;display:flex;align-items:center;justify-content:space-between;height:64px}.logo{font-family:'Playfair Display',serif;font-size:1.3rem;font-weight:900;text-decoration:none;color:var(--ink)}.logo span{color:var(--accent)}.back{font-size:.85rem;color:#666;text-decoration:none}.back:hover{color:var(--ink)}.center{flex:1;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:20px;padding:48px;text-align:center}.icon{font-size:4rem}h1{font-family:'Playfair Display',serif;font-size:clamp(2rem,5vw,3rem);font-weight:900;letter-spacing:-.03em}p{color:#666;max-width:400px;font-size:.95rem;line-height:1.65}.tag{display:inline-block;background:var(--cream);border:1px solid #ccc;padding:6px 16px;border-radius:20px;font-size:.75rem;font-weight:500;letter-spacing:.1em;text-transform:uppercase;color:#888;margin-top:8px}</style></head><body><header><a class="logo" href="index.html">IELTS <span>Practice</span> Hub</a><a class="back" href="index.html">← Back</a></header><div class="center"><div class="icon">🎤</div><h1>Speaking</h1><p>Shadowing videos and AI-generated speaking practice with recording are being prepared. Check back soon!</p><div class="tag">Coming soon</div></div></body></html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Speaking - IELTS Practice Hub</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #fafafa; --surface: #ffffff; --border: #e5e5e5;
+      --text: #1a1a1a; --text2: #6b6b6b; --text3: #999;
+      --blue: #2563eb; --blue-bg: #eff6ff; --green: #16a34a; --green-bg: #f0fdf4;
+      --red: #dc2626; --red-bg: #fef2f2; --orange: #ea580c; --orange-bg: #fff7ed;
+      --purple: #7c3aed; --purple-bg: #f5f3ff;
+      --radius: 8px;
+    }
+    body { font-family: 'Inter', system-ui, sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
+
+    .topnav { background: var(--surface); border-bottom: 1px solid var(--border); padding: 0 24px; display: flex; align-items: center; height: 56px; position: sticky; top: 0; z-index: 100; }
+    .topnav-brand { font-weight: 700; font-size: 1.05rem; margin-right: 32px; white-space: nowrap; text-decoration: none; color: var(--text); }
+    .topnav-brand span { color: var(--blue); }
+    .topnav-links { display: flex; gap: 4px; overflow-x: auto; }
+    .topnav-links a { padding: 8px 14px; border-radius: 6px; font-size: 0.82rem; font-weight: 500; text-decoration: none; color: var(--text2); white-space: nowrap; transition: background 0.15s, color 0.15s; }
+    .topnav-links a:hover { background: var(--bg); color: var(--text); }
+    .topnav-links a.active { background: var(--blue-bg); color: var(--blue); }
+
+    .page-wrap { max-width: 820px; margin: 0 auto; padding: 32px 24px; }
+
+    /* NAME BAR */
+    .name-bar {
+      background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+      padding: 14px 20px; margin-bottom: 20px; display: flex; align-items: center; gap: 12px; flex-wrap: wrap;
+    }
+    .name-bar label { font-size: 0.82rem; font-weight: 600; white-space: nowrap; }
+    .name-bar input {
+      flex: 1; min-width: 180px; padding: 7px 12px; border: 1px solid var(--border); border-radius: 6px;
+      font-family: inherit; font-size: 0.85rem;
+    }
+    .name-bar input:focus { outline: none; border-color: var(--purple); box-shadow: 0 0 0 2px rgba(124,58,237,0.1); }
+
+    /* PART SELECTOR */
+    .part-selector {
+      background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+      padding: 14px 20px; margin-bottom: 20px; display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
+    }
+    .part-selector label { font-size: 0.82rem; font-weight: 600; }
+    .part-chip {
+      padding: 7px 16px; border-radius: 20px; border: 1.5px solid var(--border); background: var(--surface);
+      font-family: inherit; font-size: 0.8rem; font-weight: 500; cursor: pointer; transition: all 0.15s;
+    }
+    .part-chip:hover { border-color: var(--purple); color: var(--purple); }
+    .part-chip.selected { background: var(--purple); color: #fff; border-color: var(--purple); }
+
+    /* TIMER */
+    .timer-bar {
+      background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+      padding: 12px 20px; margin-bottom: 20px; display: flex; align-items: center; gap: 12px; flex-wrap: wrap;
+    }
+    .timer-bar label { font-size: 0.82rem; font-weight: 500; }
+    .timer-display { font-size: 1.3rem; font-weight: 700; font-variant-numeric: tabular-nums; min-width: 80px; }
+    .timer-display.warning { color: var(--orange); }
+    .timer-display.danger { color: var(--red); }
+    .timer-btn { padding: 6px 16px; border-radius: 6px; border: 1px solid var(--border); background: var(--surface); font-family: inherit; font-size: 0.8rem; font-weight: 500; cursor: pointer; }
+    .timer-btn:hover { background: #f5f5f5; }
+    .timer-btn.primary { background: var(--purple); color: #fff; border-color: var(--purple); }
+    .timer-btn.primary:hover { opacity: 0.9; }
+    .timer-info { font-size: 0.75rem; color: var(--text3); margin-left: auto; }
+
+    /* PROMPT */
+    .prompt-block {
+      background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+      margin-bottom: 20px; overflow: hidden;
+    }
+    .prompt-header { padding: 12px 20px; font-weight: 600; font-size: 0.85rem; background: #f9f9f9; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
+    .prompt-tag { font-size: 0.68rem; font-weight: 600; padding: 2px 8px; border-radius: 10px; background: var(--purple-bg); color: var(--purple); }
+    .prompt-body { padding: 20px; font-size: 0.88rem; line-height: 1.8; color: #333; }
+    .prompt-body .cue-card {
+      background: #f9f9f9; border: 1px solid var(--border); border-radius: 6px;
+      padding: 16px; white-space: pre-wrap; font-size: 0.85rem; line-height: 1.7; margin-top: 8px;
+    }
+    .prompt-body ul { list-style: disc; padding-left: 20px; margin: 8px 0; }
+    .prompt-body li { margin-bottom: 6px; font-size: 0.85rem; }
+    .prompt-body .part-label { font-weight: 600; color: var(--purple); margin-bottom: 8px; font-size: 0.82rem; }
+
+    /* RECORDING */
+    .record-block {
+      background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+      margin-bottom: 20px; padding: 28px; text-align: center;
+    }
+    .record-block h3 { font-size: 0.92rem; font-weight: 600; margin-bottom: 16px; }
+    .rec-btn {
+      width: 72px; height: 72px; border-radius: 50%; border: none; cursor: pointer;
+      font-size: 1.6rem; display: inline-flex; align-items: center; justify-content: center;
+      transition: transform 0.15s, box-shadow 0.15s;
+    }
+    .rec-btn:hover { transform: scale(1.05); }
+    .rec-btn.idle { background: var(--red); color: #fff; box-shadow: 0 2px 12px rgba(220,38,38,0.25); }
+    .rec-btn.recording { background: #fff; color: var(--red); border: 3px solid var(--red); animation: pulse 1.2s infinite; }
+    @keyframes pulse { 0%, 100% { box-shadow: 0 0 0 0 rgba(220,38,38,0.3); } 50% { box-shadow: 0 0 0 12px rgba(220,38,38,0); } }
+    .rec-status { font-size: 0.82rem; color: var(--text2); margin-top: 12px; }
+    .rec-status.live { color: var(--red); font-weight: 500; }
+    .rec-timer { font-size: 1.1rem; font-weight: 700; font-variant-numeric: tabular-nums; margin-top: 6px; color: var(--red); display: none; }
+
+    .recordings-list { margin-top: 20px; text-align: left; }
+    .recording-item {
+      display: flex; align-items: center; gap: 10px; padding: 10px 0;
+      border-top: 1px solid #f0f0f0;
+    }
+    .recording-item:first-child { border-top: none; }
+    .recording-item audio { flex: 1; height: 36px; }
+    .recording-label { font-size: 0.78rem; color: var(--text3); min-width: 90px; }
+    .upload-btn {
+      padding: 5px 14px; border-radius: 6px; border: 1px solid var(--purple);
+      background: var(--purple-bg); color: var(--purple);
+      font-family: inherit; font-size: 0.75rem; font-weight: 600; cursor: pointer;
+      white-space: nowrap; transition: all 0.15s;
+    }
+    .upload-btn:hover { background: var(--purple); color: #fff; }
+    .upload-btn:disabled { opacity: 0.5; cursor: default; }
+    .upload-btn.done { background: var(--green-bg); color: var(--green); border-color: var(--green); }
+
+    /* TOAST */
+    .toast {
+      position: fixed; bottom: 24px; right: 24px; padding: 12px 20px; border-radius: 8px;
+      font-size: 0.85rem; font-weight: 500; color: #fff; z-index: 200;
+      transform: translateY(80px); opacity: 0; transition: all 0.3s ease;
+    }
+    .toast.show { transform: translateY(0); opacity: 1; }
+    .toast.success { background: var(--green); }
+    .toast.error { background: var(--red); }
+    .toast.info { background: var(--purple); }
+
+    @media (max-width: 768px) {
+      .page-wrap { padding: 16px 12px; }
+    }
+  </style>
+</head>
+<body>
+
+<nav class="topnav">
+  <a class="topnav-brand" href="index.html">IELTS <span>Hub</span></a>
+  <div class="topnav-links">
+    <a href="index.html">Dashboard</a>
+    <a href="listening.html">Listening</a>
+    <a href="reading.html">Reading</a>
+    <a href="writing.html">Writing</a>
+    <a href="speaking.html" class="active">Speaking</a>
+    <a href="shadowing.html">Shadowing</a>
+    <a href="vocab.html">Vocab</a>
+  </div>
+</nav>
+
+<div class="page-wrap">
+  <!-- Name -->
+  <div class="name-bar">
+    <label>Your Name:</label>
+    <input type="text" id="student-name" placeholder="Enter your name..." />
+  </div>
+
+  <!-- Part selector -->
+  <div class="part-selector">
+    <label>Practice:</label>
+    <button class="part-chip selected" id="chip-p1" onclick="selectPart(1)">Part 1 (4-5 min)</button>
+    <button class="part-chip" id="chip-p2" onclick="selectPart(2)">Part 2 (3-4 min)</button>
+    <button class="part-chip" id="chip-p3" onclick="selectPart(3)">Part 3 (4-5 min)</button>
+    <button class="part-chip" id="chip-all" onclick="selectPart(0)">Full Test</button>
+  </div>
+
+  <!-- Timer -->
+  <div class="timer-bar">
+    <label>Timer:</label>
+    <span class="timer-display" id="timer-display">00:00</span>
+    <button class="timer-btn primary" onclick="toggleTimer()" id="timer-btn">Start</button>
+    <button class="timer-btn" onclick="resetTimer()">Reset</button>
+    <span class="timer-info" id="timer-info">4-5 min</span>
+  </div>
+
+  <!-- Prompt area (dynamically rendered) -->
+  <div id="prompts-area"></div>
+
+  <!-- Recording -->
+  <div class="record-block">
+    <h3>Record Your Response</h3>
+    <button class="rec-btn idle" id="rec-btn" onclick="toggleRecording()">&#x1F3A4;</button>
+    <div class="rec-timer" id="rec-timer">00:00</div>
+    <div class="rec-status" id="rec-status">Tap to start recording</div>
+    <div class="recordings-list" id="recordings-list"></div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const SHEET_URL = "https://script.google.com/macros/s/AKfycbwL3uhZasnCex4w6izyOzTlMc7jRRo7PkH6co0zpM-A1-mtkGqjdLCCn7UyWtK_PF4Rpw/exec";
+
+const PROMPTS = {
+  1: {
+    label: "Part 1 - Introduction & Interview",
+    time: "4-5 min",
+    body: `<div class="part-label">The examiner asks you about yourself, your home, work or studies and other familiar topics.</div>
+<p style="margin:8px 0;font-weight:500;">Example topic: <em>Daily routine</em></p>
+<ul>
+  <li>What do you do in a typical day?</li>
+  <li>Do you prefer to have the same routine every day, or do you like variety? [Why?]</li>
+  <li>What part of your daily routine do you enjoy the most? [Why?]</li>
+  <li>Would you like to change anything about your daily routine? [Why/Why not?]</li>
+</ul>`
+  },
+  2: {
+    label: "Part 2 - Individual Long Turn",
+    time: "3-4 min",
+    body: `<div class="part-label">You have 1 minute to prepare, then speak for 1-2 minutes.</div>
+<div class="cue-card">Describe a skill you learned that you think is useful.
+
+You should say:
+  - what the skill is
+  - when and where you learned it
+  - how you learned it
+and explain why you think it is useful.</div>
+<p style="margin-top:12px;font-size:0.82rem;color:var(--text3);">You will have to talk about the topic for one to two minutes. You have one minute to think about what you are going to say. You can make some notes to help you if you wish.</p>`
+  },
+  3: {
+    label: "Part 3 - Two-way Discussion",
+    time: "4-5 min",
+    body: `<div class="part-label">Discussion topics related to Part 2:</div>
+<p style="margin:8px 0;font-weight:500;">Learning skills</p>
+<ul>
+  <li>What kinds of skills are most useful for young people to learn today?</li>
+  <li>Do you think schools should focus more on practical skills? [Why/Why not?]</li>
+  <li>How has technology changed the way people learn new skills?</li>
+</ul>
+<p style="margin:12px 0 8px;font-weight:500;">Teaching and learning</p>
+<ul>
+  <li>Is it better to learn a skill from a teacher or by yourself?</li>
+  <li>Why do some people find it difficult to learn new things?</li>
+  <li>Do you think everyone has the ability to learn any skill if they try hard enough?</li>
+</ul>`
+  }
+};
+
+let selectedPart = 1;
+let timerInterval = null, timerSeconds = 0, timerRunning = false;
+let mediaRecorder = null, audioChunks = [], recordings = [], isRecording = false;
+let recTimerInterval = null, recSeconds = 0;
+
+// ── Init ──
+(function init() {
+  const saved = localStorage.getItem('studentName');
+  if (saved) document.getElementById('student-name').value = saved;
+  document.getElementById('student-name').addEventListener('change', e => {
+    localStorage.setItem('studentName', e.target.value.trim());
+  });
+  renderPrompts();
+})();
+
+// ── Part selection ──
+function selectPart(n) {
+  selectedPart = n;
+  ['p1','p2','p3','all'].forEach((id, i) => {
+    const val = i < 3 ? i + 1 : 0;
+    document.getElementById('chip-' + id).className = 'part-chip' + (val === n ? ' selected' : '');
+  });
+  const info = n === 0 ? '11-14 min total' : n === 2 ? '3-4 min' : '4-5 min';
+  document.getElementById('timer-info').textContent = info;
+  renderPrompts();
+}
+
+function renderPrompts() {
+  const area = document.getElementById('prompts-area');
+  const parts = selectedPart === 0 ? [1, 2, 3] : [selectedPart];
+  area.innerHTML = parts.map(p => {
+    const pr = PROMPTS[p];
+    return `<div class="prompt-block">
+      <div class="prompt-header">
+        <span>${pr.label}</span>
+        <span class="prompt-tag">${pr.time}</span>
+      </div>
+      <div class="prompt-body">${pr.body}</div>
+    </div>`;
+  }).join('');
+}
+
+// ── Timer ──
+function toggleTimer() { timerRunning ? pauseTimer() : startTimer(); }
+function startTimer() {
+  timerRunning = true;
+  document.getElementById('timer-btn').textContent = 'Pause';
+  timerInterval = setInterval(() => { timerSeconds++; updateTimerDisplay(); }, 1000);
+}
+function pauseTimer() {
+  timerRunning = false;
+  document.getElementById('timer-btn').textContent = 'Start';
+  clearInterval(timerInterval);
+}
+function resetTimer() { pauseTimer(); timerSeconds = 0; updateTimerDisplay(); }
+function updateTimerDisplay() {
+  const m = Math.floor(timerSeconds / 60).toString().padStart(2, '0');
+  const s = (timerSeconds % 60).toString().padStart(2, '0');
+  const el = document.getElementById('timer-display');
+  if (el) el.textContent = m + ':' + s;
+}
+
+// ── Recording ──
+async function toggleRecording() {
+  if (isRecording) { stopRecording(); } else { await startRecording(); }
+}
+
+async function startRecording() {
+  try {
+    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+    mediaRecorder = new MediaRecorder(stream);
+    audioChunks = [];
+    mediaRecorder.ondataavailable = e => { if (e.data.size > 0) audioChunks.push(e.data); };
+    mediaRecorder.onstop = () => {
+      const blob = new Blob(audioChunks, { type: 'audio/webm' });
+      const url = URL.createObjectURL(blob);
+      const duration = recSeconds;
+      recordings.push({ url, blob, time: new Date().toLocaleTimeString(), duration });
+      renderRecordings();
+      stream.getTracks().forEach(t => t.stop());
+      clearInterval(recTimerInterval);
+      document.getElementById('rec-timer').style.display = 'none';
+    };
+    mediaRecorder.start();
+    isRecording = true;
+    recSeconds = 0;
+    document.getElementById('rec-btn').className = 'rec-btn recording';
+    document.getElementById('rec-btn').innerHTML = '&#x23F9;';
+    document.getElementById('rec-status').className = 'rec-status live';
+    document.getElementById('rec-status').textContent = 'Recording...';
+    document.getElementById('rec-timer').style.display = 'block';
+    recTimerInterval = setInterval(() => {
+      recSeconds++;
+      const m = Math.floor(recSeconds / 60).toString().padStart(2, '0');
+      const s = (recSeconds % 60).toString().padStart(2, '0');
+      document.getElementById('rec-timer').textContent = m + ':' + s;
+    }, 1000);
+  } catch (err) {
+    showToast('Could not access microphone. Please allow access.', 'error');
+  }
+}
+
+function stopRecording() {
+  if (mediaRecorder && mediaRecorder.state !== 'inactive') mediaRecorder.stop();
+  isRecording = false;
+  document.getElementById('rec-btn').className = 'rec-btn idle';
+  document.getElementById('rec-btn').innerHTML = '&#x1F3A4;';
+  document.getElementById('rec-status').className = 'rec-status';
+  document.getElementById('rec-status').textContent = 'Tap to record again';
+}
+
+function renderRecordings() {
+  const list = document.getElementById('recordings-list');
+  list.innerHTML = recordings.map((r, i) => {
+    const dur = Math.floor(r.duration / 60) + 'm ' + (r.duration % 60) + 's';
+    return `<div class="recording-item">
+      <span class="recording-label">Take ${i + 1} (${dur})</span>
+      <audio controls src="${r.url}"></audio>
+      <button class="upload-btn" id="upload-btn-${i}" onclick="uploadRecording(${i})">Submit to Drive</button>
+    </div>`;
+  }).join('');
+}
+
+async function uploadRecording(index) {
+  const rec = recordings[index];
+  if (!rec || !rec.blob) return;
+
+  const name = document.getElementById('student-name').value.trim();
+  if (!name) { showToast('Please enter your name first.', 'error'); return; }
+  localStorage.setItem('studentName', name);
+
+  const btn = document.getElementById('upload-btn-' + index);
+  btn.textContent = 'Uploading...';
+  btn.disabled = true;
+
+  try {
+    const reader = new FileReader();
+    const base64 = await new Promise((resolve, reject) => {
+      reader.onload = () => resolve(reader.result.split(',')[1]);
+      reader.onerror = reject;
+      reader.readAsDataURL(rec.blob);
+    });
+
+    const partLabel = selectedPart === 0 ? 'Full Test' : 'Part ' + selectedPart;
+    const unit = 'Speaking ' + partLabel;
+    const dur = Math.floor(rec.duration / 60) + 'm ' + (rec.duration % 60) + 's';
+
+    const response = await fetch(SHEET_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        action: 'saveRecording',
+        name: name,
+        section: 'Speaking',
+        unit: unit,
+        timestamp: new Date().toISOString(),
+        correct: 0, total: 0, pct: 0,
+        notes: 'Take ' + (index + 1) + ', ' + dur,
+        audioData: base64,
+        mimeType: rec.blob.type || 'audio/webm',
+        duration: dur
+      })
+    });
+
+    await response.json();
+    btn.textContent = 'Saved!';
+    btn.className = 'upload-btn done';
+    showToast('Recording saved to Google Drive!', 'success');
+  } catch (err) {
+    fetch(SHEET_URL, {
+      method: 'POST', mode: 'no-cors',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        action: 'saveRecording',
+        name: document.getElementById('student-name').value.trim(),
+        section: 'Speaking',
+        unit: 'Speaking Part ' + selectedPart,
+        timestamp: new Date().toISOString(),
+        correct: 0, total: 0, pct: 0,
+        notes: 'Take ' + (index + 1),
+        audioData: '',
+        mimeType: 'audio/webm',
+        duration: ''
+      })
+    });
+    btn.textContent = 'Sent';
+    btn.style.color = 'var(--orange)';
+    showToast('Submitted (offline mode)', 'info');
+  }
+}
+
+// ── Toast ──
+function showToast(message, type) {
+  const t = document.getElementById('toast');
+  t.textContent = message;
+  t.className = 'toast ' + type + ' show';
+  setTimeout(() => { t.className = 'toast'; }, 3000);
+}
+</script>
+</body>
+</html>
