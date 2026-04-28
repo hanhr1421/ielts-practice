@@ -111,6 +111,32 @@
     .toast.error { background: var(--red); }
     .toast.info { background: var(--blue); }
 
+    /* SELECTOR */
+    .selector-screen { padding: 48px 24px; display: flex; justify-content: center; }
+    .selector-wrap { max-width: 600px; width: 100%; }
+    .selector-title { font-size: 1.5rem; font-weight: 700; margin-bottom: 6px; }
+    .selector-sub { font-size: 0.85rem; color: var(--text2); margin-bottom: 32px; }
+    .selector-row { margin-bottom: 24px; }
+    .selector-label { display: block; font-size: 0.75rem; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: var(--blue); margin-bottom: 10px; }
+    .selector-chips { display: flex; flex-wrap: wrap; gap: 8px; }
+    .cam-chip, .test-chip {
+      padding: 9px 18px; border-radius: 6px; border: 1.5px solid var(--border); background: var(--surface);
+      font-family: inherit; font-size: 0.85rem; font-weight: 500; cursor: pointer; transition: all 0.15s;
+    }
+    .cam-chip:hover, .test-chip:hover { border-color: var(--blue); background: var(--blue-bg); }
+    .cam-chip.active { background: var(--blue); color: #fff; border-color: var(--blue); }
+    .test-chip.active { background: var(--text); color: #fff; border-color: var(--text); }
+    .cam-chip.disabled, .test-chip.disabled { opacity: 0.4; cursor: default; pointer-events: none; }
+    .start-btn {
+      margin-top: 28px; padding: 12px 32px; background: var(--blue); color: #fff; border: none;
+      border-radius: 6px; font-family: inherit; font-size: 0.92rem; font-weight: 600; cursor: pointer;
+    }
+    .start-btn:hover { opacity: 0.9; }
+    .test-topbar { display: flex; align-items: center; gap: 14px; padding: 10px 24px; border-bottom: 1px solid var(--border); background: var(--surface); }
+    .back-btn { padding: 6px 14px; border: 1px solid var(--border); border-radius: 4px; background: #fff; font-family: inherit; font-size: 0.82rem; cursor: pointer; }
+    .back-btn:hover { background: #f5f5f5; }
+    .test-topbar-label { font-size: 0.88rem; font-weight: 600; }
+
     @media (max-width: 768px) {
       .page-wrap { padding: 16px 12px; }
     }
@@ -131,55 +157,77 @@
   </div>
 </nav>
 
-<div class="page-wrap">
-  <!-- Student name -->
-  <div class="name-bar">
-    <label>Your Name:</label>
-    <input type="text" id="student-name" placeholder="Enter your name..." />
-  </div>
+<!-- SELECTOR SCREEN -->
+<div id="selector-screen" class="selector-screen">
+  <div class="selector-wrap">
+    <h2 class="selector-title">Writing Practice</h2>
+    <p class="selector-sub">Choose a Cambridge book, test, and task type to get your writing prompt.</p>
 
-  <!-- Task type selector -->
-  <div class="task-selector">
-    <label>Task Type:</label>
-    <button class="task-chip selected" id="chip-task1" onclick="selectTask(1)">Task 1 (20 min, 150+ words)</button>
-    <button class="task-chip" id="chip-task2" onclick="selectTask(2)">Task 2 (40 min, 250+ words)</button>
-  </div>
-
-  <!-- Timer -->
-  <div class="timer-bar">
-    <label>Timer:</label>
-    <span class="timer-display" id="timer-display">00:00</span>
-    <button class="timer-btn primary" onclick="toggleTimer()" id="timer-btn">Start</button>
-    <button class="timer-btn" onclick="resetTimer()">Reset</button>
-    <span class="timer-info" id="timer-info">20 min recommended</span>
-  </div>
-
-  <!-- Prompt area -->
-  <div class="prompt-block">
-    <div class="prompt-header">
-      <span>Writing Prompt</span>
-      <span class="prompt-tag" id="prompt-tag">Task 1</span>
+    <div class="selector-row">
+      <label class="selector-label">Cambridge Book:</label>
+      <div class="selector-chips" id="cam-chips"></div>
     </div>
-    <div class="prompt-body" id="prompt-body">You should spend about 20 minutes on this task.
 
-Summarise the information by selecting and reporting the main features, and make comparisons where relevant.
-
-Write at least 150 words.</div>
-  </div>
-
-  <!-- Text area -->
-  <div class="writing-area">
-    <div class="writing-header">
-      <span>Your Response</span>
-      <span class="word-count" id="word-count">0 words</span>
+    <div class="selector-row" id="test-row" style="display:none">
+      <label class="selector-label">Test:</label>
+      <div class="selector-chips" id="test-chips"></div>
     </div>
-    <textarea class="writing-textarea" id="writing-text" placeholder="Start writing here..." oninput="updateWordCount()"></textarea>
+
+    <div class="selector-row" id="task-row" style="display:none">
+      <label class="selector-label">Task:</label>
+      <div class="selector-chips" id="task-chips"></div>
+    </div>
+
+    <button class="start-btn" id="start-btn" style="display:none" onclick="startWriting()">Start Writing →</button>
+  </div>
+</div>
+
+<!-- WRITING SCREEN -->
+<div id="writing-screen" style="display:none">
+  <div class="test-topbar">
+    <button class="back-btn" onclick="showSelector()">← Back</button>
+    <span class="test-topbar-label" id="test-topbar-label"></span>
   </div>
 
-  <!-- Submit -->
-  <div class="submit-bar">
-    <button class="submit-btn" id="submit-btn" onclick="submitWriting()">Submit to Google Drive</button>
-    <span class="submit-msg" id="submit-msg"></span>
+  <div class="page-wrap">
+    <!-- Student name -->
+    <div class="name-bar">
+      <label>Your Name:</label>
+      <input type="text" id="student-name" placeholder="Enter your name..." />
+    </div>
+
+    <!-- Timer -->
+    <div class="timer-bar">
+      <label>Timer:</label>
+      <span class="timer-display" id="timer-display">00:00</span>
+      <button class="timer-btn primary" onclick="toggleTimer()" id="timer-btn">Start</button>
+      <button class="timer-btn" onclick="resetTimer()">Reset</button>
+      <span class="timer-info" id="timer-info">20 min recommended</span>
+    </div>
+
+    <!-- Prompt area -->
+    <div class="prompt-block">
+      <div class="prompt-header">
+        <span>Writing Prompt</span>
+        <span class="prompt-tag" id="prompt-tag">Task 1</span>
+      </div>
+      <div class="prompt-body" id="prompt-body"></div>
+    </div>
+
+    <!-- Text area -->
+    <div class="writing-area">
+      <div class="writing-header">
+        <span>Your Response</span>
+        <span class="word-count" id="word-count">0 words</span>
+      </div>
+      <textarea class="writing-textarea" id="writing-text" placeholder="Start writing here..." oninput="updateWordCount()"></textarea>
+    </div>
+
+    <!-- Submit -->
+    <div class="submit-bar">
+      <button class="submit-btn" id="submit-btn" onclick="submitWriting()">Submit to Google Drive</button>
+      <span class="submit-msg" id="submit-msg"></span>
+    </div>
   </div>
 </div>
 
@@ -188,33 +236,115 @@ Write at least 150 words.</div>
 <script>
 const SHEET_URL = "https://script.google.com/macros/s/AKfycbwL3uhZasnCex4w6izyOzTlMc7jRRo7PkH6co0zpM-A1-mtkGqjdLCCn7UyWtK_PF4Rpw/exec";
 
-let selectedTask = 1;
+// ── WRITING PROMPTS DATA ─────────────────────────────────────────────────
+const WRITING_TESTS = {
+  c1_t1: {
+    task1: "You should spend about 20 minutes on this task.\n\nThe chart below shows the number of men and women in further education in Britain in three periods and whether they were studying full-time or part-time.\n\nSummarise the information by selecting and reporting the main features, and make comparisons where relevant.\n\nWrite at least 150 words.",
+    task2: "You should spend about 40 minutes on this task.\n\nWrite about the following topic:\n\nIn many countries children are engaged in some kind of paid work. Some people regard this as completely wrong, while others consider it as valuable work experience, important for learning and taking responsibility.\n\nWhat are your opinions on this?\n\nGive reasons for your answer and include any relevant examples from your own knowledge or experience.\n\nWrite at least 250 words."
+  },
+  c1_t2: {
+    task1: "You should spend about 20 minutes on this task.\n\nThe graph below shows the different modes of transport used to travel to and from work in one European city in 1950, 1970 and 1990.\n\nSummarise the information by selecting and reporting the main features, and make comparisons where relevant.\n\nWrite at least 150 words.",
+    task2: "You should spend about 40 minutes on this task.\n\nWrite about the following topic:\n\nNews editors decide what to broadcast on television and what to print in newspapers. What factors do you think influence these decisions? Do we become used to bad news? Would it be better if more good news was reported?\n\nGive reasons for your answer and include any relevant examples from your own knowledge or experience.\n\nWrite at least 250 words."
+  },
+  c1_t3: {
+    task1: "You should spend about 20 minutes on this task.\n\nThe charts below show the main reasons for study among students of different age groups and the amount of support they received from employers.\n\nSummarise the information by selecting and reporting the main features, and make comparisons where relevant.\n\nWrite at least 150 words.",
+    task2: "You should spend about 40 minutes on this task.\n\nWrite about the following topic:\n\nSome governments spend a lot of money on art such as paintings, music and drama. Some people disagree with this and say governments should spend money on other things such as health and education.\n\nDiscuss both views and give your own opinion.\n\nWrite at least 250 words."
+  },
+  c1_t4: {
+    task1: "You should spend about 20 minutes on this task.\n\nThe table below shows the figures for imprisonment in five countries between 1930 and 1980.\n\nSummarise the information by selecting and reporting the main features, and make comparisons where relevant.\n\nWrite at least 150 words.",
+    task2: "You should spend about 40 minutes on this task.\n\nWrite about the following topic:\n\nSome people believe that children should be allowed to stay at home and play until they are six or seven years old. Others believe that it is important for young children to go to school as soon as possible.\n\nWhat do you think are the advantages of attending school from a young age?\n\nGive reasons for your answer and include any relevant examples from your own knowledge or experience.\n\nWrite at least 250 words."
+  }
+};
+
+// Available Cambridge versions
+const AVAILABLE_CAMS = [1,9,10,11,12,13,14,15,16,17,18,19,20];
+const CAMS_WITH_DATA = { 1: [1,2,3,4] }; // cam -> available test nums
+
+let selectedCam = null, selectedTestNum = null, selectedTask = null;
 let timerInterval = null, timerSeconds = 0, timerRunning = false;
 
-// ── Init ──
-(function init() {
+// ── SELECTOR ─────────────────────────────────────────────────────────────
+function buildSelector() {
+  const camChips = document.getElementById('cam-chips');
+  camChips.innerHTML = AVAILABLE_CAMS.map(v => {
+    const has = !!CAMS_WITH_DATA[v];
+    return `<button class="cam-chip${has ? '' : ' disabled'}" data-cam="${v}" onclick="selectCam(${v})">Cam ${v}</button>`;
+  }).join('');
+}
+
+function selectCam(num) {
+  selectedCam = num;
+  selectedTestNum = null;
+  selectedTask = null;
+  document.querySelectorAll('.cam-chip').forEach(b => b.classList.remove('active'));
+  document.querySelector(`[data-cam="${num}"]`).classList.add('active');
+
+  const testRow = document.getElementById('test-row');
+  const testChips = document.getElementById('test-chips');
+  const available = CAMS_WITH_DATA[num] || [];
+  testRow.style.display = '';
+  testChips.innerHTML = [1,2,3,4].map(t => {
+    const has = available.includes(t);
+    return `<button class="test-chip${has ? '' : ' disabled'}" data-test="${t}" onclick="selectTest(${t})">Test ${t}</button>`;
+  }).join('');
+
+  document.getElementById('task-row').style.display = 'none';
+  document.getElementById('start-btn').style.display = 'none';
+}
+
+function selectTest(t) {
+  selectedTestNum = t;
+  selectedTask = null;
+  document.querySelectorAll('.test-chip').forEach(b => b.classList.remove('active'));
+  document.querySelector(`[data-test="${t}"]`).classList.add('active');
+
+  const taskRow = document.getElementById('task-row');
+  const taskChips = document.getElementById('task-chips');
+  taskRow.style.display = '';
+  taskChips.innerHTML = `
+    <button class="cam-chip" data-task="1" onclick="selectTaskType(1)">Task 1 (20 min, 150+ words)</button>
+    <button class="cam-chip" data-task="2" onclick="selectTaskType(2)">Task 2 (40 min, 250+ words)</button>
+  `;
+  document.getElementById('start-btn').style.display = 'none';
+}
+
+function selectTaskType(n) {
+  selectedTask = n;
+  document.querySelectorAll('[data-task]').forEach(b => b.classList.remove('active'));
+  document.querySelector(`[data-task="${n}"]`).classList.add('active');
+  document.getElementById('start-btn').style.display = '';
+}
+
+function startWriting() {
+  document.getElementById('selector-screen').style.display = 'none';
+  document.getElementById('writing-screen').style.display = '';
+  document.getElementById('test-topbar-label').textContent = `Cambridge ${selectedCam} — Test ${selectedTestNum} — Task ${selectedTask}`;
+
+  // Set prompt
+  const key = `c${selectedCam}_t${selectedTestNum}`;
+  const prompts = WRITING_TESTS[key];
+  const prompt = prompts ? (selectedTask === 1 ? prompts.task1 : prompts.task2) : 'Prompt not available.';
+  document.getElementById('prompt-body').textContent = prompt;
+  document.getElementById('prompt-tag').textContent = 'Task ' + selectedTask;
+  document.getElementById('timer-info').textContent = (selectedTask === 1 ? '20' : '40') + ' min recommended';
+
+  // Reset state
+  document.getElementById('writing-text').value = '';
+  document.getElementById('word-count').textContent = '0 words';
+  document.getElementById('submit-btn').disabled = false;
+  document.getElementById('submit-btn').textContent = 'Submit to Google Drive';
+  document.getElementById('submit-msg').style.display = 'none';
+  resetTimer();
+
+  // Load name
   const saved = localStorage.getItem('studentName');
   if (saved) document.getElementById('student-name').value = saved;
-  document.getElementById('student-name').addEventListener('change', e => {
-    localStorage.setItem('studentName', e.target.value.trim());
-  });
-})();
+}
 
-// ── Task selection ──
-function selectTask(n) {
-  selectedTask = n;
-  document.getElementById('chip-task1').className = 'task-chip' + (n === 1 ? ' selected' : '');
-  document.getElementById('chip-task2').className = 'task-chip' + (n === 2 ? ' selected' : '');
-  document.getElementById('prompt-tag').textContent = 'Task ' + n;
-  document.getElementById('timer-info').textContent = (n === 1 ? '20' : '40') + ' min recommended';
-
-  if (n === 1) {
-    document.getElementById('prompt-body').textContent =
-      'You should spend about 20 minutes on this task.\n\nSummarise the information by selecting and reporting the main features, and make comparisons where relevant.\n\nWrite at least 150 words.';
-  } else {
-    document.getElementById('prompt-body').textContent =
-      'You should spend about 40 minutes on this task.\n\nWrite about the following topic:\n\n[Your chosen topic or question will appear here]\n\nGive reasons for your answer and include any relevant examples from your own knowledge or experience.\n\nWrite at least 250 words.';
-  }
+function showSelector() {
+  document.getElementById('selector-screen').style.display = '';
+  document.getElementById('writing-screen').style.display = 'none';
+  pauseTimer();
 }
 
 // ── Word count ──
@@ -260,7 +390,7 @@ function submitWriting() {
   localStorage.setItem('studentName', name);
 
   const wordCount = text.split(/\s+/).length;
-  const unit = 'Writing Task ' + selectedTask;
+  const unit = `Cambridge ${selectedCam} Test ${selectedTestNum} Writing Task ${selectedTask}`;
   const timeNote = wordCount + ' words, ' + Math.floor(timerSeconds/60) + 'm ' + (timerSeconds%60) + 's';
   const prompt = document.getElementById('prompt-body').textContent;
 
@@ -330,6 +460,16 @@ function showToast(message, type) {
   t.className = 'toast ' + type + ' show';
   setTimeout(() => { t.className = 'toast'; }, 3000);
 }
+
+// ── Init ──
+(function init() {
+  buildSelector();
+  const saved = localStorage.getItem('studentName');
+  if (saved) {
+    const el = document.getElementById('student-name');
+    if (el) el.value = saved;
+  }
+})();
 </script>
 </body>
 </html>
