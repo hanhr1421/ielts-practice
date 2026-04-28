@@ -26,18 +26,6 @@
     .topnav-links a.active { background: var(--blue-bg); color: var(--blue); }
 
     /* LAYOUT */
-    .layout { display: flex; min-height: calc(100vh - 56px); }
-    .sidebar { width: 220px; flex-shrink: 0; border-right: 1px solid var(--border); background: var(--surface); overflow-y: auto; }
-    .sidebar-section { padding: 16px 16px 6px; font-size: 0.68rem; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: var(--text3); }
-    .sidebar-btn {
-      display: block; width: 100%; padding: 9px 16px; background: none; border: none;
-      text-align: left; cursor: pointer; font-family: inherit; font-size: 0.82rem;
-      color: var(--text2); transition: background 0.12s;
-    }
-    .sidebar-btn:hover { background: #f5f5f5; color: var(--text); }
-    .sidebar-btn.active { background: var(--blue-bg); color: var(--blue); font-weight: 600; }
-    .sidebar-btn.disabled { color: var(--text3); cursor: default; }
-    .sidebar-btn.disabled:hover { background: none; }
 
     /* CONTENT */
     .content { flex: 1; padding: 32px; max-width: 800px; }
@@ -125,11 +113,33 @@
     .coming-soon { display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 300px; gap: 12px; color: var(--text3); text-align: center; }
     .coming-soon h3 { font-size: 1.1rem; font-weight: 600; }
 
+    /* SELECTOR */
+    .selector-screen { padding: 48px 24px; display: flex; justify-content: center; }
+    .selector-wrap { max-width: 600px; width: 100%; }
+    .selector-title { font-size: 1.5rem; font-weight: 700; margin-bottom: 6px; }
+    .selector-sub { font-size: 0.85rem; color: var(--text2); margin-bottom: 32px; }
+    .selector-row { margin-bottom: 24px; }
+    .selector-label { display: block; font-size: 0.75rem; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: var(--blue); margin-bottom: 10px; }
+    .selector-chips { display: flex; flex-wrap: wrap; gap: 8px; }
+    .cam-chip, .test-chip {
+      padding: 9px 18px; border-radius: 6px; border: 1.5px solid var(--border); background: var(--surface);
+      font-family: inherit; font-size: 0.85rem; font-weight: 500; cursor: pointer; transition: all 0.15s;
+    }
+    .cam-chip:hover, .test-chip:hover { border-color: var(--blue); background: var(--blue-bg); }
+    .cam-chip.active { background: var(--blue); color: #fff; border-color: var(--blue); }
+    .test-chip.active { background: var(--text); color: #fff; border-color: var(--text); }
+    .cam-chip.disabled, .test-chip.disabled { opacity: 0.4; cursor: default; pointer-events: none; }
+    .start-btn {
+      margin-top: 28px; padding: 12px 32px; background: var(--blue); color: #fff; border: none;
+      border-radius: 6px; font-family: inherit; font-size: 0.92rem; font-weight: 600; cursor: pointer;
+    }
+    .start-btn:hover { opacity: 0.9; }
+    .test-topbar { display: flex; align-items: center; gap: 14px; padding: 10px 24px; border-bottom: 1px solid var(--border); background: var(--surface); }
+    .back-btn { padding: 6px 14px; border: 1px solid var(--border); border-radius: 4px; background: #fff; font-family: inherit; font-size: 0.82rem; cursor: pointer; }
+    .back-btn:hover { background: #f5f5f5; }
+    .test-topbar-label { font-size: 0.88rem; font-weight: 600; }
+
     @media (max-width: 768px) {
-      .layout { flex-direction: column; }
-      .sidebar { width: 100%; border-right: none; border-bottom: 1px solid var(--border); display: flex; flex-wrap: wrap; padding: 8px; gap: 4px; }
-      .sidebar-section { display: none; }
-      .sidebar-btn { width: auto; padding: 6px 12px; border-radius: 6px; font-size: 0.78rem; }
       .content { padding: 20px 16px; }
     }
   </style>
@@ -149,43 +159,211 @@
   </div>
 </nav>
 
-<div class="layout">
-  <nav class="sidebar" id="sidebar"></nav>
-  <main class="content" id="main-content">
-    <div class="content-header">
-      <h1>Reading</h1>
-      <p>Select a Cambridge test from the sidebar to begin.</p>
+<!-- SELECTOR SCREEN -->
+<div id="selector-screen" class="selector-screen">
+  <div class="selector-wrap">
+    <h2 class="selector-title">Reading Practice</h2>
+    <p class="selector-sub">Choose a Cambridge book and test number to begin. 3 passages, 40 questions, 60 minutes recommended.</p>
+
+    <div class="selector-row">
+      <label class="selector-label">Cambridge Book:</label>
+      <div class="selector-chips" id="cam-chips"></div>
     </div>
-    <div class="coming-soon">
-      <div style="font-size:2.5rem">&#x1F4D6;</div>
-      <h3>Select a test to start practicing</h3>
-      <p style="font-size:0.82rem; max-width:320px">Choose a Cambridge version and test from the sidebar. Questions and passages will appear here.</p>
+
+    <div class="selector-row" id="test-row" style="display:none">
+      <label class="selector-label">Test:</label>
+      <div class="selector-chips" id="test-chips"></div>
     </div>
-  </main>
+
+    <button class="start-btn" id="start-btn" style="display:none" onclick="startSelectedTest()">Start Test →</button>
+  </div>
+</div>
+
+<!-- TEST SCREEN -->
+<div id="test-screen" style="display:none">
+  <div class="test-topbar">
+    <button class="back-btn" onclick="showSelector()">← Back</button>
+    <span class="test-topbar-label" id="test-topbar-label"></span>
+  </div>
+  <main class="content" id="main-content" style="max-width:860px;margin:0 auto;"></main>
 </div>
 
 <script>
-const CAMBRIDGE_VERSIONS = [9,10,11,12,13,14,15,16,17,18,19,20];
+const CAMBRIDGE_VERSIONS = [1,9,10,11,12,13,14,15,16,17,18,19,20];
 const TESTS_PER_VERSION = 4;
 const SHEET_URL = "https://script.google.com/macros/s/AKfycbwL3uhZasnCex4w6izyOzTlMc7jRRo7PkH6co0zpM-A1-mtkGqjdLCCn7UyWtK_PF4Rpw/exec";
 
-// ── TEST DATA (placeholder - will be populated per Cambridge version) ────
-const TESTS = {};
+// ── TEST DATA ────────────────────────────────────────────────────────────
+const TESTS = {
+  c1_t1: {
+    title: "Cambridge 1 — Reading Test 1",
+    subtitle: "3 passages · 40 questions · 60 minutes recommended",
+    sections: [
+      {
+        passageTitle: "Reading Passage 1 — Rainforests",
+        passage: `Rainforests are forests characterised by high rainfall, with definitions setting minimum normal annual rainfall between 1750–2000 mm. The canopy in the tropical rainforest is typically 30–45 m tall. Tropical rainforests have been called the "jewels of the Earth" and the "world's largest pharmacy", because over one quarter of natural medicines have been discovered within them.\n\nTropical rainforests cover about 6% of the Earth's surface. They are found near the equator. Despite covering only a small area of the planet, they are home to half of the world's plant and animal species.\n\nRainforests are divided into different layers, or strata. The emergent layer contains a small number of very large trees which grow above the general canopy. The canopy layer forms a "roof" over the forest. Most of the food and animal life is found in this layer. The understory layer lies between the canopy and the forest floor. Many birds, snakes, and lizards live here. The forest floor receives only 2% of the sunlight. Many forms of fungi grow here, helping to decompose animal and plant matter.\n\nRainforests are threatened by unsustainable logging, mining, agricultural practices and climate change. Deforestation is considerable, and areas cleared of forest are visible in satellite photographs. Annual deforestation in tropical rainforests stands at about 8 million hectares per year, an area the size of a small European country.\n\nScientists estimate that if current rates of destruction continue, the world's rainforests could be completely destroyed within the next 100 years. Conservation organisations are working to protect remaining areas through a variety of strategies.`,
+        qRange: "Questions 1–13",
+        groups: [
+          {
+            instruction: "Questions 1–5: Do the following statements agree with the information given in the passage? Write TRUE, FALSE, or NOT GIVEN.",
+            type: "tfng",
+            questions: [
+              { num: 1, stem: "Rainforests require at least 1750 mm of annual rainfall.", answer: "TRUE" },
+              { num: 2, stem: "The canopy layer typically reaches heights of over 50 metres.", answer: "FALSE" },
+              { num: 3, stem: "Tropical rainforests cover more than 10% of the Earth's surface.", answer: "FALSE" },
+              { num: 4, stem: "Most animal species in rainforests are found in the canopy layer.", answer: "TRUE" },
+              { num: 5, stem: "The forest floor receives about 10% of available sunlight.", answer: "FALSE" }
+            ]
+          },
+          {
+            instruction: "Questions 6–9: Complete the sentences below. Write NO MORE THAN THREE WORDS from the passage for each answer.",
+            type: "fill",
+            questions: [
+              { num: 6, stem: "Over 25% of natural _______ come from rainforests.", answer: "medicines" },
+              { num: 7, stem: "Tropical rainforests are home to half the world's plant and _______ species.", answer: "animal" },
+              { num: 8, stem: "Fungi on the forest floor help to _______ dead matter.", answer: "decompose" },
+              { num: 9, stem: "Approximately 8 million _______ of rainforest are destroyed annually.", answer: "hectares" }
+            ]
+          },
+          {
+            instruction: "Questions 10–13: Choose the correct letter, A, B, C or D.",
+            type: "mcq",
+            questions: [
+              { num: 10, stem: "Tropical rainforests have been called 'the world's largest pharmacy' because", options: ["A they contain many hospitals.", "B over a quarter of natural medicines come from them.", "C scientists work there full-time.", "D they export pharmaceutical products."], answer: "B" },
+              { num: 11, stem: "The emergent layer of the rainforest is characterised by", options: ["A a dense coverage of medium trees.", "B the greatest variety of animal life.", "C a small number of very tall trees.", "D thick undergrowth."], answer: "C" },
+              { num: 12, stem: "Which of the following is NOT mentioned as a threat to rainforests?", options: ["A Tourism", "B Mining", "C Agriculture", "D Climate change"], answer: "A" },
+              { num: 13, stem: "According to the passage, if destruction continues at current rates,", options: ["A half the rainforest will remain in 50 years.", "B rainforests could vanish within a century.", "C new rainforests will grow in other areas.", "D governments will ban all logging."], answer: "B" }
+            ]
+          }
+        ]
+      },
+      {
+        passageTitle: "Reading Passage 2 — The Development of the Telephone",
+        passage: `The telephone is one of the most important inventions in communication history. Alexander Graham Bell is widely credited with its invention, having been awarded the first patent in 1876. However, the development of the telephone was not the work of a single individual.\n\nAntonio Meucci, an Italian inventor, developed a voice-communicating device in 1849 and filed a caveat (a notice of intent to patent) for his design in 1871, five years before Bell's patent. Meucci was unable to afford the $10 fee to maintain the caveat after 1874, and Bell filed his patent in February 1876.\n\nElisha Gray also filed a patent caveat for a telephone design on the same day as Bell. There is ongoing debate about whether Bell's lawyers may have had access to Gray's filing. Regardless, Bell won the legal battle and became known as the telephone's inventor.\n\nThe first commercial telephone services were established in 1877, initially serving only a few hundred customers. By 1886, more than 150,000 people in the United States owned telephones. The growth was exponential — by 1900, there were nearly 600,000 phones in the US, and by 1910 over 7 million.\n\nThe telephone fundamentally changed both personal communication and business operations. Before the telephone, communication over distance required either physical travel or written correspondence delivered by post, which could take days or weeks. The telephone made instant long-distance communication possible for the first time.\n\nToday's smartphones bear little physical resemblance to Bell's original device, but the core principle — converting sound into electrical signals and back — remains unchanged.`,
+        qRange: "Questions 14–26",
+        groups: [
+          {
+            instruction: "Questions 14–19: Do the following statements agree with the information given in the passage? Write YES, NO, or NOT GIVEN.",
+            type: "ynng",
+            questions: [
+              { num: 14, stem: "Bell was the first person to develop a voice communication device.", answer: "NO" },
+              { num: 15, stem: "Meucci filed his caveat in 1871.", answer: "YES" },
+              { num: 16, stem: "Meucci lost his caveat because he could not afford the maintenance fee.", answer: "YES" },
+              { num: 17, stem: "Gray filed his patent on a different day to Bell.", answer: "NO" },
+              { num: 18, stem: "Bell's legal team acted illegally.", answer: "NOT GIVEN" },
+              { num: 19, stem: "The first commercial telephone services had more than 1000 customers.", answer: "NOT GIVEN" }
+            ]
+          },
+          {
+            instruction: "Questions 20–23: Complete the notes below. Write NO MORE THAN TWO WORDS AND/OR A NUMBER from the passage.",
+            type: "fill",
+            questions: [
+              { num: 20, stem: "Bell received the first telephone patent in _______.", answer: "1876" },
+              { num: 21, stem: "By 1886, over _______ people in the US had telephones.", answer: "150,000/150000" },
+              { num: 22, stem: "Before the telephone, distant communication required travel or written _______.", answer: "correspondence" },
+              { num: 23, stem: "By 1910 there were over _______ million telephones in the US.", answer: "7" }
+            ]
+          },
+          {
+            instruction: "Questions 24–26: Choose the correct letter, A, B, C or D.",
+            type: "mcq",
+            questions: [
+              { num: 24, stem: "Antonio Meucci's contribution to the telephone is best described as", options: ["A completely unknown until recently.", "B widely recognised at the time.", "C an earlier development than Bell's.", "D commercially more successful than Bell's."], answer: "C" },
+              { num: 25, stem: "The growth in telephone ownership between 1877 and 1910 is described as", options: ["A slow and steady.", "B exponential.", "C unpredictable.", "D limited to businesses."], answer: "B" },
+              { num: 26, stem: "According to the passage, modern smartphones and Bell's telephone share", options: ["A the same physical design.", "B the same price range.", "C the same core operating principle.", "D the same number of features."], answer: "C" }
+            ]
+          }
+        ]
+      },
+      {
+        passageTitle: "Reading Passage 3 — Sleep and Memory",
+        passage: `The relationship between sleep and memory has been the subject of extensive scientific research over the past few decades. It is now well established that sleep plays a critical role in the consolidation of memories — the process by which short-term memories are transformed into long-lasting ones.\n\nResearch has identified two main types of memory that benefit from sleep: declarative memory (facts and events) and procedural memory (skills and habits). Studies show that different stages of sleep contribute to the consolidation of different types of memory. Slow-wave sleep (deep sleep) appears particularly important for declarative memory, while REM (rapid eye movement) sleep seems to benefit procedural memory.\n\nIn a landmark study conducted by Born and Wagner in 2004, participants who slept after learning a complex task were three times more likely to discover a hidden shortcut in the task than those who stayed awake. This suggests that sleep not only preserves memories but also reorganises them, potentially leading to creative insights.\n\nSleep deprivation has been shown to have severe effects on memory formation. Even a single night of poor sleep can reduce the ability to form new memories by up to 40%. Chronic sleep deprivation is associated with long-term cognitive decline and increased risk of neurodegenerative diseases such as Alzheimer's.\n\nThe recommended amount of sleep for adults is 7–9 hours per night, yet studies indicate that approximately one-third of adults regularly sleep less than 6 hours. This "sleep debt" accumulates over time and cannot be fully recovered by sleeping more on weekends.\n\nRecent research has also explored the role of naps in memory consolidation. A study by Mednick et al. (2003) found that a 60–90 minute nap containing both slow-wave and REM sleep was almost as effective as a full night's sleep for consolidating certain types of learning.\n\nThe implications of this research are significant for education and workplace productivity. Some schools and companies have begun incorporating rest periods into their schedules, recognising that sleep is not wasted time but an active process essential for learning and performance.`,
+        qRange: "Questions 27–40",
+        groups: [
+          {
+            instruction: "Questions 27–32: Complete the summary below. Choose NO MORE THAN TWO WORDS from the passage.",
+            type: "fill",
+            questions: [
+              { num: 27, stem: "Sleep helps transform short-term memories into _______ ones.", answer: "long-lasting" },
+              { num: 28, stem: "Slow-wave sleep is particularly important for _______ memory.", answer: "declarative" },
+              { num: 29, stem: "REM sleep appears to benefit _______ memory.", answer: "procedural" },
+              { num: 30, stem: "In Born and Wagner's study, sleeping participants were _______ times more likely to find a shortcut.", answer: "three" },
+              { num: 31, stem: "One night of poor sleep can reduce memory formation by up to _______.", answer: "40%/40 percent" },
+              { num: 32, stem: "About one-third of adults sleep less than _______ hours regularly.", answer: "6/six" }
+            ]
+          },
+          {
+            instruction: "Questions 33–36: Do the following statements agree with the claims of the writer? Write YES, NO, or NOT GIVEN.",
+            type: "ynng",
+            questions: [
+              { num: 33, stem: "Sleep only preserves memories without changing them.", answer: "NO" },
+              { num: 34, stem: "Chronic sleep deprivation may contribute to Alzheimer's disease.", answer: "YES" },
+              { num: 35, stem: "Weekend sleep can fully compensate for weekday sleep debt.", answer: "NO" },
+              { num: 36, stem: "All schools now include mandatory nap time.", answer: "NOT GIVEN" }
+            ]
+          },
+          {
+            instruction: "Questions 37–40: Choose the correct letter, A, B, C or D.",
+            type: "mcq",
+            questions: [
+              { num: 37, stem: "The passage suggests that sleep's role in memory is", options: ["A passive storage.", "B active reorganisation.", "C mainly physical recovery.", "D still unknown."], answer: "B" },
+              { num: 38, stem: "The study by Mednick et al. found that naps", options: ["A are as effective as a full night's sleep for all learning.", "B are only useful for children.", "C can be almost as effective as full sleep for some learning.", "D have no measurable benefit."], answer: "C" },
+              { num: 39, stem: "The recommended sleep for adults is", options: ["A 5–6 hours.", "B 6–7 hours.", "C 7–9 hours.", "D 9–11 hours."], answer: "C" },
+              { num: 40, stem: "The passage concludes that", options: ["A more research is needed before any changes can be made.", "B sleep should be seen as essential for learning and performance.", "C companies should not concern themselves with employee sleep.", "D naps should replace full nights of sleep."], answer: "B" }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+};
 
-// ── Build sidebar ────────────────────────────────────────────────────────
-function buildSidebar() {
-  const sb = document.getElementById('sidebar');
-  let html = '';
-  CAMBRIDGE_VERSIONS.forEach(v => {
-    html += `<div class="sidebar-section">Cambridge ${v}</div>`;
-    for (let t = 1; t <= TESTS_PER_VERSION; t++) {
-      const key = `c${v}_t${t}`;
-      const hasData = TESTS[key];
-      const cls = hasData ? '' : 'disabled';
-      html += `<button class="sidebar-btn ${cls}" data-key="${key}" onclick="loadTest('${key}')">${hasData ? '' : ''}Test ${t}</button>`;
-    }
-  });
-  sb.innerHTML = html;
+// ── SELECTOR ─────────────────────────────────────────────────────────────
+let selectedCam = null;
+let selectedTestNum = null;
+
+function buildSelector() {
+  const camChips = document.getElementById('cam-chips');
+  camChips.innerHTML = CAMBRIDGE_VERSIONS.map(v => {
+    const hasAny = [1,2,3,4].some(t => TESTS[`c${v}_t${t}`]);
+    return `<button class="cam-chip${hasAny ? '' : ' disabled'}" data-cam="${v}" onclick="selectCam(${v})">Cam ${v}</button>`;
+  }).join('');
+}
+
+function selectCam(num) {
+  selectedCam = num;
+  selectedTestNum = null;
+  document.querySelectorAll('.cam-chip').forEach(b => b.classList.remove('active'));
+  document.querySelector(`[data-cam="${num}"]`).classList.add('active');
+
+  const testRow = document.getElementById('test-row');
+  const testChips = document.getElementById('test-chips');
+  testRow.style.display = '';
+  testChips.innerHTML = [1,2,3,4].map(t => {
+    const has = !!TESTS[`c${num}_t${t}`];
+    return `<button class="test-chip${has ? '' : ' disabled'}" data-test="${t}" onclick="selectTestNum(${t})">Test ${t}</button>`;
+  }).join('');
+  document.getElementById('start-btn').style.display = 'none';
+}
+
+function selectTestNum(t) {
+  selectedTestNum = t;
+  document.querySelectorAll('.test-chip').forEach(b => b.classList.remove('active'));
+  document.querySelector(`[data-test="${t}"]`).classList.add('active');
+  document.getElementById('start-btn').style.display = '';
+}
+
+function startSelectedTest() {
+  const key = `c${selectedCam}_t${selectedTestNum}`;
+  document.getElementById('selector-screen').style.display = 'none';
+  document.getElementById('test-screen').style.display = '';
+  document.getElementById('test-topbar-label').textContent = `Cambridge ${selectedCam} — Test ${selectedTestNum}`;
+  loadTest(key);
+}
+
+function showSelector() {
+  document.getElementById('selector-screen').style.display = '';
+  document.getElementById('test-screen').style.display = 'none';
 }
 
 // ── Load test ────────────────────────────────────────────────────────────
@@ -197,11 +375,6 @@ let timerRunning = false;
 
 function loadTest(key) {
   const test = TESTS[key];
-
-  // Update sidebar active state
-  document.querySelectorAll('.sidebar-btn').forEach(b => b.classList.remove('active'));
-  const btn = document.querySelector(`[data-key="${key}"]`);
-  if (btn) btn.classList.add('active');
 
   if (!test) {
     document.getElementById('main-content').innerHTML = `
@@ -273,7 +446,7 @@ function loadTest(key) {
           html += `<div class="q-item">
             <span class="q-num">${q.num}</span>
             <span class="q-text">${q.stem}</span>
-            <select class="tfng-select" onchange="answers[${q.num}]=this.value">
+            <select class="tfng-select" id="sel-${q.num}" onchange="answers[${q.num}]=this.value">
               <option value="">--</option>
               <option value="TRUE">TRUE</option>
               <option value="FALSE">FALSE</option>
@@ -286,7 +459,7 @@ function loadTest(key) {
           html += `<div class="q-item">
             <span class="q-num">${q.num}</span>
             <span class="q-text">${q.stem}</span>
-            <select class="tfng-select" onchange="answers[${q.num}]=this.value">
+            <select class="tfng-select" id="sel-${q.num}" onchange="answers[${q.num}]=this.value">
               <option value="">--</option>
               <option value="YES">YES</option>
               <option value="NO">NO</option>
@@ -379,9 +552,9 @@ function submitTest() {
 
         if (isCorrect(given, expected)) {
           correct++;
-          highlightQ(q.num, true);
+          highlightQ(q.num, true, given, expected);
         } else {
-          highlightQ(q.num, false);
+          highlightQ(q.num, false, given, expected);
         }
       });
     });
@@ -423,18 +596,41 @@ function submitTest() {
 
 function isCorrect(given, expected) {
   if (!given || !expected) return false;
+  const g = given.trim().toLowerCase().replace(/[%,]/g, '');
   // Handle slash-separated alternatives
-  const alts = expected.split('/').map(a => a.trim().toLowerCase());
-  return alts.some(a => a === given);
+  const alts = expected.split('/').map(a => a.trim().toLowerCase().replace(/[%,]/g, ''));
+  return alts.some(a => a === g || g.includes(a) || a.includes(g));
 }
 
-function highlightQ(num, correct) {
+function highlightQ(num, correct, given, expected) {
   const inp = document.getElementById('inp-' + num);
-  if (inp) { inp.classList.add(correct ? 'correct' : 'incorrect'); }
+  if (inp) {
+    inp.classList.add(correct ? 'correct' : 'incorrect');
+    if (!correct) inp.title = 'Correct: ' + expected;
+    return;
+  }
+  // MCQ radio highlighting
+  const opts = document.querySelectorAll(`[id^="opt-${num}-"]`);
+  if (opts.length > 0) {
+    opts.forEach(el => {
+      const radio = el.querySelector('input');
+      if (!radio) return;
+      if (radio.value.toUpperCase() === (expected||'').charAt(0).toUpperCase()) el.classList.add('correct-hl');
+      else if (radio.value.toUpperCase() === (given||'').charAt(0).toUpperCase() && !correct) el.classList.add('wrong-hl');
+    });
+    return;
+  }
+  // TFNG/YNNG select highlighting
+  const sel = document.getElementById('sel-' + num);
+  if (sel) {
+    sel.style.borderColor = correct ? 'var(--green)' : 'var(--red)';
+    sel.style.background = correct ? 'var(--green-bg)' : 'var(--red-bg)';
+    if (!correct) sel.title = 'Correct: ' + expected;
+  }
 }
 
 // ── Init ─────────────────────────────────────────────────────────────────
-buildSidebar();
+buildSelector();
 </script>
 </body>
 </html>

@@ -129,6 +129,36 @@
     .coming-soon { display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 300px; gap: 14px; color: #aaa; text-align: center; }
     .coming-soon h3 { font-family: 'Playfair Display', serif; font-size: 1.3rem; color: #bbb; }
 
+    /* SELECTOR */
+    .selector-screen { padding: 48px 24px; display: flex; justify-content: center; }
+    .selector-wrap { max-width: 600px; width: 100%; }
+    .selector-title { font-family: 'Playfair Display', serif; font-size: 1.8rem; font-weight: 900; margin-bottom: 6px; }
+    .selector-sub { font-size: 0.88rem; color: #666; margin-bottom: 32px; }
+    .selector-row { margin-bottom: 24px; }
+    .selector-label { display: block; font-size: 0.78rem; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--blue); margin-bottom: 10px; }
+    .selector-chips { display: flex; flex-wrap: wrap; gap: 8px; }
+    .cam-chip, .test-chip {
+      padding: 10px 20px; border-radius: 6px; border: 1.5px solid #ccc; background: white;
+      font-family: 'DM Sans', sans-serif; font-size: 0.88rem; font-weight: 500; cursor: pointer;
+      transition: all 0.15s;
+    }
+    .cam-chip:hover, .test-chip:hover { border-color: var(--blue); background: var(--blue-light); }
+    .cam-chip.active { background: var(--blue); color: white; border-color: var(--blue); }
+    .test-chip.active { background: var(--ink); color: var(--paper); border-color: var(--ink); }
+    .cam-chip.disabled, .test-chip.disabled { opacity: 0.4; cursor: default; pointer-events: none; }
+    .start-btn {
+      margin-top: 28px; padding: 14px 36px; background: var(--blue); color: white; border: none;
+      border-radius: 6px; font-family: 'DM Sans', sans-serif; font-size: 1rem; font-weight: 600;
+      cursor: pointer; transition: opacity 0.2s;
+    }
+    .start-btn:hover { opacity: 0.88; }
+
+    /* TEST TOP BAR */
+    .test-topbar { display: flex; align-items: center; gap: 16px; padding: 12px 24px; border-bottom: 1px solid #ccc; background: var(--cream); }
+    .back-btn { padding: 6px 14px; border: 1px solid #ccc; border-radius: 4px; background: white; font-family: 'DM Sans', sans-serif; font-size: 0.82rem; cursor: pointer; }
+    .back-btn:hover { background: #f0f0f0; }
+    .test-topbar-label { font-size: 0.88rem; font-weight: 600; }
+
     @media (max-width: 768px) {
       .layout { flex-direction: column; }
       .sidebar { width: 100%; height: auto; position: static; border-right: none; border-bottom: 1px solid #ccc; display: flex; flex-wrap: wrap; padding: 12px; gap: 6px; }
@@ -162,15 +192,36 @@
   <div class="student-badge" id="student-badge">Student</div>
 </div>
 
-<div class="layout">
-  <nav class="sidebar">
-    <div class="sidebar-section">Cambridge 1</div>
-    <button class="test-btn active" onclick="loadTest('t1')" id="btn-t1">Test 1 <span class="test-tag">Live</span></button>
-    <button class="test-btn" onclick="loadTest('t2')" id="btn-t2">Test 2 <span class="test-tag soon">Soon</span></button>
-    <button class="test-btn" onclick="loadTest('t3')" id="btn-t3">Test 3 <span class="test-tag soon">Soon</span></button>
-    <button class="test-btn" onclick="loadTest('t4')" id="btn-t4">Test 4 <span class="test-tag soon">Soon</span></button>
-  </nav>
-  <main class="content" id="main-content"></main>
+<!-- SELECTOR SCREEN -->
+<div id="selector-screen" class="selector-screen">
+  <div class="selector-wrap">
+    <h2 class="selector-title">Choose your test</h2>
+    <p class="selector-sub">Select a Cambridge book and test number to begin.</p>
+
+    <div class="selector-row">
+      <label class="selector-label">Cambridge Book:</label>
+      <div class="selector-chips" id="cam-chips"></div>
+    </div>
+
+    <div class="selector-row" id="test-row" style="display:none">
+      <label class="selector-label">Test:</label>
+      <div class="selector-chips" id="test-chips"></div>
+    </div>
+
+    <button class="start-btn" id="start-btn" style="display:none" onclick="startSelectedTest()">Start Test →</button>
+  </div>
+</div>
+
+<!-- TEST SCREEN (hidden until test selected) -->
+<div id="test-screen" style="display:none">
+  <div class="test-topbar">
+    <button class="back-btn" onclick="showSelector()">← Back to selector</button>
+    <span class="test-topbar-label" id="test-topbar-label"></span>
+  </div>
+  <div class="layout">
+    <nav class="sidebar" id="sidebar-nav"></nav>
+    <main class="content" id="main-content"></main>
+  </div>
 </div>
 
 <script>
@@ -377,6 +428,100 @@ const TESTS = {
 let currentTest = 't1';
 let answers = {};
 let checkboxSel = {}; // groupId -> Set of selected keys
+let selectedCam = null;
+let selectedTestNum = null;
+
+// Available Cambridge versions and which have data
+const AVAILABLE_CAMS = [
+  { num: 1, hasData: true },
+  { num: 2, hasData: false },
+  { num: 3, hasData: false },
+  { num: 4, hasData: false },
+  { num: 5, hasData: false },
+  { num: 6, hasData: false },
+  { num: 7, hasData: false },
+  { num: 8, hasData: false },
+  { num: 9, hasData: false },
+  { num: 10, hasData: false },
+  { num: 11, hasData: false },
+  { num: 12, hasData: false },
+  { num: 13, hasData: false },
+  { num: 14, hasData: false },
+  { num: 15, hasData: false },
+  { num: 16, hasData: false },
+  { num: 17, hasData: false },
+  { num: 18, hasData: false },
+  { num: 19, hasData: false },
+  { num: 20, hasData: false },
+];
+
+// Which tests have data per Cambridge (cam -> [testNums])
+const AVAILABLE_TESTS = {
+  1: [1] // Only Cam 1 Test 1 for now
+};
+
+function buildSelector() {
+  const camChips = document.getElementById('cam-chips');
+  camChips.innerHTML = AVAILABLE_CAMS.map(c =>
+    `<button class="cam-chip${c.hasData ? '' : ' disabled'}" data-cam="${c.num}" onclick="selectCam(${c.num})">Cam ${c.num}</button>`
+  ).join('');
+}
+
+function selectCam(num) {
+  selectedCam = num;
+  selectedTestNum = null;
+  document.querySelectorAll('.cam-chip').forEach(b => b.classList.remove('active'));
+  document.querySelector(`[data-cam="${num}"]`).classList.add('active');
+
+  // Show test chips
+  const testRow = document.getElementById('test-row');
+  const testChips = document.getElementById('test-chips');
+  const available = AVAILABLE_TESTS[num] || [];
+  testRow.style.display = '';
+  testChips.innerHTML = [1,2,3,4].map(t =>
+    `<button class="test-chip${available.includes(t) ? '' : ' disabled'}" data-test="${t}" onclick="selectTestNum(${t})">Test ${t}</button>`
+  ).join('');
+
+  document.getElementById('start-btn').style.display = 'none';
+}
+
+function selectTestNum(t) {
+  selectedTestNum = t;
+  document.querySelectorAll('.test-chip').forEach(b => b.classList.remove('active'));
+  document.querySelector(`[data-test="${t}"]`).classList.add('active');
+  document.getElementById('start-btn').style.display = '';
+}
+
+function startSelectedTest() {
+  document.getElementById('selector-screen').style.display = 'none';
+  document.getElementById('test-screen').style.display = '';
+  document.getElementById('test-topbar-label').textContent = `Cambridge ${selectedCam} — Test ${selectedTestNum}`;
+
+  // Build sidebar for the tests within this Cambridge version
+  const sidebar = document.getElementById('sidebar-nav');
+  const available = AVAILABLE_TESTS[selectedCam] || [];
+  sidebar.innerHTML = `<div class="sidebar-section">Cambridge ${selectedCam}</div>` +
+    [1,2,3,4].map(t => {
+      const hasData = available.includes(t);
+      const isActive = t === selectedTestNum;
+      return `<button class="test-btn${isActive ? ' active' : ''}" ${hasData ? `onclick="switchTest(${t})"` : ''} id="btn-t${t}">Test ${t} <span class="test-tag${hasData ? '' : ' soon'}">${hasData ? 'Live' : 'Soon'}</span></button>`;
+    }).join('');
+
+  loadTest('t' + selectedTestNum);
+}
+
+function switchTest(t) {
+  selectedTestNum = t;
+  document.getElementById('test-topbar-label').textContent = `Cambridge ${selectedCam} — Test ${selectedTestNum}`;
+  document.querySelectorAll('.test-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('btn-t' + t).classList.add('active');
+  loadTest('t' + t);
+}
+
+function showSelector() {
+  document.getElementById('selector-screen').style.display = '';
+  document.getElementById('test-screen').style.display = 'none';
+}
 
 // ── GOOGLE DRIVE AUDIO ───────────────────────────────────────────────────────
 const SHEET_URL = "https://script.google.com/macros/s/AKfycbwL3uhZasnCex4w6izyOzTlMc7jRRo7PkH6co0zpM-A1-mtkGqjdLCCn7UyWtK_PF4Rpw/exec";
@@ -395,13 +540,10 @@ async function fetchDriveAudio(cambridge) {
 }
 
 function resolveDriveAudio(localPath, audioMap) {
-  // localPath like "audio/Test_1_-_Section_1.mp3"
-  // Try to match against Drive file names like "Test1_Section1.mp3"
   if (!audioMap || Object.keys(audioMap).length === 0) return localPath;
   const match = localPath.match(/Test[_\s]*(\d+)[_\s]*[-]*[_\s]*Section[_\s]*(\d+)/i);
   if (!match) return localPath;
   const t = match[1], s = match[2];
-  // Try common naming patterns
   const patterns = [
     `Test${t}_Section${s}.mp3`,
     `Test_${t}_-_Section_${s}.mp3`,
@@ -410,7 +552,6 @@ function resolveDriveAudio(localPath, audioMap) {
   for (const p of patterns) {
     if (audioMap[p]) return audioMap[p];
   }
-  // Fuzzy: find any file containing TestX and SectionY
   for (const [name, url] of Object.entries(audioMap)) {
     if (name.includes('Test' + t) && name.includes('Section' + s)) return url;
   }
@@ -439,14 +580,14 @@ function loadTest(id) {
   html += `<div class="submit-bar">
     <h3>Submit your answers</h3>
     <p>Answered all questions? Click below — your score and corrections will appear immediately.</p>
-    <button class="submit-btn" onclick="submitTest()">Submit Test 1 →</button>
+    <button class="submit-btn" onclick="submitTest()">Submit Answers →</button>
   </div>
   <div id="result-box"></div>`;
   content.innerHTML = html;
   window.scrollTo(0, 0);
 
   // Resolve audio from Google Drive (async, updates audio sources after render)
-  fetchDriveAudio("1").then(audioMap => {
+  fetchDriveAudio(String(selectedCam || "1")).then(audioMap => {
     test.sections.forEach(sec => {
       const driveUrl = resolveDriveAudio(sec.audio, audioMap);
       if (driveUrl !== sec.audio) {
@@ -710,7 +851,7 @@ function submitTest() {
   const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwL3uhZasnCex4w6izyOzTlMc7jRRo7PkH6co0zpM-A1-mtkGqjdLCCn7UyWtK_PF4Rpw/exec';
   if (SCRIPT_URL !== 'YOUR_GOOGLE_APPS_SCRIPT_URL_HERE') {
     fetch(SCRIPT_URL, { method:'POST', mode:'no-cors', headers:{'Content-Type':'application/json'},
-      body: JSON.stringify({ name, unit:'Test 1 Listening', correct, total, pct, section:'Listening', timestamp: new Date().toISOString() })
+      body: JSON.stringify({ name, unit:'Cambridge ' + (selectedCam||1) + ' Test ' + (selectedTestNum||1) + ' Listening', correct, total, pct, section:'Listening', timestamp: new Date().toISOString() })
     }).catch(()=>{});
   }
 }
@@ -718,7 +859,7 @@ function submitTest() {
 window.addEventListener('DOMContentLoaded', () => {
   const name = localStorage.getItem('studentName') || 'Student';
   document.getElementById('student-badge').textContent = name;
-  loadTest('t1');
+  buildSelector();
 });
 </script>
 </body>
